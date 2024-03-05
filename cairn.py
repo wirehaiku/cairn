@@ -44,9 +44,17 @@ def evaluate(atom):
 
 ### Command Functions
 
-PUSH = STACK.append
-POP  = STACK.pop
-BOOL = lambda x: {True: 1, False: 0}[x]
+PUSH  = STACK.append
+POP   = STACK.pop
+BOOL  = lambda x: {True: 1, False: 0}[x]
+
+def DEQTO(atom):
+    global QUEUE
+    i = QUEUE.index(atom)
+    print(f"deqto = {i} q={QUEUE} atoms={QUEUE[:i]} newqueue={QUEUE[i+1:]}")
+    atoms = QUEUE[:i]
+    QUEUE = QUEUE[i+1:]
+    return atoms
 
 # integer commands
 COMMS["ADD"] = lambda: PUSH(POP() + POP())
@@ -58,10 +66,20 @@ COMMS["LTE"] = lambda: PUSH(BOOL(POP(-2) <= POP()))
 # memory commands
 COMMS["CLR"] = lambda: STACK.clear()
 
+# flow control commands
+
+def DEF():
+    name = QUEUE.pop(0)
+    FUNCS[name] = DEQTO("END")
+
+COMMS.update({
+    "DEF": DEF,
+})
+
 ### Main Runtime Functions
 
 def main():
-    global QUEUE, STACK, RGSTR
+    global QUEUE, STACK, RGSTR, COMMS, FUNCS
 
     running = True
     print("Cairn prototype script.")
@@ -76,6 +94,8 @@ def main():
             raise SystemExit
 
         QUEUE.extend([atomise(elem) for elem in parse(line)])
+        print(f"queue = {QUEUE}")
+
         while len(QUEUE) > 0:
             try:
                 evaluate(QUEUE.pop(0))
@@ -84,6 +104,8 @@ def main():
 
         print(f"stack = {STACK}")
         print(f"rgstr = {RGSTR}")
+        if FUNCS:
+            print(f"funcs = {FUNCS}")
 
 if __name__ == "__main__":
     main()
