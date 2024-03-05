@@ -1,4 +1,4 @@
-## Cairn
+# Cairn
 
 **Cairn** is a stack-based personal programming language, written by [Stephen Malone][sm] in [Go 1.22][go]. It's designed to be a fun, retro programming environment for my own hobbyist coding interests.
 
@@ -19,7 +19,7 @@ By convention, all Cairn code is upper-case. Built-in functions are all three le
 
 ### Memory
 
-Cairn operates a fantasy virtual machine with two memory types: **registers** and the **stack**.
+Cairn operates inside a fantasy virtual machine with two memory types: **registers** and the **stack**.
 
 - **Registers** are fixed variables that can each store one integer.
 - The **stack** is a last-in-first-out stack of stored integers.
@@ -32,7 +32,7 @@ Input and output are handled [Brainfuck][bf]-style with a single stream each for
 
 ### Logic
 
-Zeroed (`0`) integers are considered **false**, all other integers are **true**. If a command returns a boolean value, it will always return zero (`0`) for false and one (`1`) for true.
+Zero (`0`) integers are considered **false**, all other integers are **true**. If a command returns a boolean value, it will always return zero (`0`) for false and one (`1`) for true.
 
 ## Commands
 
@@ -52,13 +52,14 @@ Name  | Form      | Description
 
 ### Memory Commands
 
-Name  | Form      | Description
------ | --------- | -----------
-`DUP` | `a → a a` | Duplicate the top item.
-`DRP` | `a b → a` | Delete the top item.
-`LEN` | `_ → a`   | Return the number of items on the stack.
-`GET` | `a → b`   | Return the value of register `a` (0 to 7).
-`SET` | `a b → _` | Set the value of register `a` (0 to 7) to `b`.
+Name  | Form        | Description
+----- | ----------- | -----------
+`DUP` | `a → a a`   | Duplicate the top item.
+`DRP` | `a b → a`   | Delete the top item.
+`SWP` | `a b → b a` | Swap the top two items.
+`LEN` | `_ → a`     | Return the number of items on the stack.
+`GET` | `a → b`     | Return the value of register `a` (0 to 7).
+`SET` | `a b → _`   | Set the value `a` to register `b` (0 to 7).
 
 ### Logic Commands
 
@@ -66,22 +67,22 @@ Name  | Form      | Description
 ----- | --------- | -----------
 `EQU` | `a b → c` | Return `1` if `a` equals `b`.
 `NEQ` | `a b → c` | Return `1` if `a` does not equal `b`.
-`AND` | `a b → c` | Return `1` if `a` and `b` are true.
-`ORR` | `a b → c` | Return `1` if `a` or `b` are true.
-`XOR` | `a b → c` | Return `1` if `a` or `b` are true (exclusive).
-`NOT` | `a → b`   | Return `0` if `a` is true, `1` if false.
+`AND` | `a b → c` | Return `1` if both `a` and `b` are true.
+`ORR` | `a b → c` | Return `1` if either `a` or `b` are true.
+`XOR` | `a b → c` | Return `1` if only `a` or only `b` is true.
+`NOT` | `a → b`   | Return `1` if `a` is false, `0` if true.
 
 ### Input / Output Commands
 
-Name  | Form      | Description
------ | --------- | -----------
-`INN` | `_ → a`   | Return an ASCII character from input as an integer.
-`OUT` | `a → _`   | Write `a` as an ASCII character to output.
-`NUM` | `a → _`   | Write `a` as an integer to output.
+Name  | Form       | Description
+----- | ---------- | -----------
+`INN` | `_ → a`    | Return an input ASCII character as an integer.
+`OUT` | `a → _`    | Write `a` as an ASCII character to output.
+`NUM` | `a → a...` | Return the ASCII character(s) of the integer `a`.
 
 ### Flow Control Commands
 
-These commands are special as they wrap smaller pieces of code and execute them only on specific conditions. Each flow command must end with the symbol `END` after the arguments.
+These commands are special as they wrap smaller pieces of code and execute them according to specific conditions. Each flow command must end with the symbol `END` after the arguments.
 
 #### `IFT [CODE] END` · `a → _`
 
@@ -95,21 +96,17 @@ Execute `[CODE]` if the top item is false.
 
 Execute `[CODE]` in a continuous loop until the value of register `[REG]` (0 to 7) is false.
 
-#### `DEF [NAME] [CODE] END`
+#### `DEF [NAME] [CODE] END` · `_ → _`
 
-Set the user-defined function `[NAME]` to `[CODE]`. After executing this command, the symbol `[NAME]` will execute `[CODE]`. Functions can be re-defined at any time.
+Set the user-defined function `[NAME]` to `[CODE]`. After executing this command, the symbol `[NAME]` will always execute `[CODE]`. Functions can be re-defined at any time.
 
+## Contributing
 
-
-
-
-
-
-
-
+Please add all bug reports and feature requests to the [issue tracker][is], thank you.
 
 [bf]: https://esolangs.org/wiki/Brainfuck
 [ch]: https://github.com/wirehaiku/cairn/blob/main/changes.md
 [go]: https://golang.org/doc/go1.22
+[is]: https://github.com/wirehaiku/cairn/issues
 [li]: https://github.com/wirehaiku/cairn/blob/main/license.md
 [sm]: https://mastodon.social/@stvmln
