@@ -51,7 +51,7 @@ Name  | Form      | Description
 `SUB` | `a b → c` | Subtract the top two items (`a` - `b`).
 `MOD` | `a b → c` | Modulo the top two items (`a` % `b`).
 `GTE` | `a b → c` | Return `1` if `a` is greater than or equal to `b`.
-`LTE` | `a b → c` | Return `1` if `a` is lesser than or equal to `b`.
+`LTE` | `a b → c` | Return `1` if `a` is less than or equal to `b`.
 
 ### Memory Commands
 

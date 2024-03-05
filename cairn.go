@@ -243,3 +243,77 @@ func EvaluateAll(as []any) error {
 
 	return nil
 }
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                             Part 4: Command Functions                             //
+///////////////////////////////////////////////////////////////////////////////////////
+
+// 4.1: Command Helper Functions
+/////////////////////////////////
+
+// Bool returns a boolean as an integer.
+func Bool(b bool) uint8 {
+	if b {
+		return 1
+	}
+
+	return 0
+}
+
+// 4.2: Integer Commands
+/////////////////////////
+
+// ADD (a b > c) adds the top two stack items.
+func ADD() error {
+	us, err := PopN(2)
+	if err != nil {
+		return err
+	}
+
+	Push(us[1] + us[0])
+	return nil
+}
+
+// SUB (a b > c) subtracts the top two stack items.
+func SUB() error {
+	us, err := PopN(2)
+	if err != nil {
+		return err
+	}
+
+	Push(us[1] - us[0])
+	return nil
+}
+
+// MOD (a b > c) modulos the top two stack items.
+func MOD() error {
+	us, err := PopN(2)
+	if err != nil {
+		return err
+	}
+
+	Push(us[1] % us[0])
+	return nil
+}
+
+// GTE (a b > c) returns true if a is greater than or equal to b.
+func GTE() error {
+	us, err := PopN(2)
+	if err != nil {
+		return err
+	}
+
+	Push(Bool(us[1] >= us[0]))
+	return nil
+}
+
+// LTE (a b > c) returns true if a is less than or equal to b.
+func LTE() error {
+	us, err := PopN(2)
+	if err != nil {
+		return err
+	}
+
+	Push(Bool(us[1] <= us[0]))
+	return nil
+}

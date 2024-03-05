@@ -258,3 +258,89 @@ func TestEvaluateAll(t *testing.T) {
 	err = EvaluateAll(AS(false))
 	assert.Equal(t, ErrAtomUndefined, err)
 }
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                         Part 4: Testing Command Functions                         //
+///////////////////////////////////////////////////////////////////////////////////////
+
+// 4.1: Testing Command Helper Functions
+/////////////////////////////////////////
+
+func TestBool(t *testing.T) {
+	// success - true
+	u := Bool(true)
+	assert.Equal(t, uint8(1), u)
+
+	// success - false
+	u = Bool(false)
+	assert.Equal(t, uint8(0), u)
+}
+
+// 4.2: Testing Integer Commands
+/////////////////////////////////
+
+func TestADD(t *testing.T) {
+	// setup
+	Stack = US(1, 2)
+
+	// success
+	err := ADD()
+	assert.Equal(t, US(3), Stack)
+	assert.NoError(t, err)
+}
+
+func TestSUB(t *testing.T) {
+	// setup
+	Stack = US(3, 2)
+
+	// success
+	err := SUB()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+}
+
+func TestMOD(t *testing.T) {
+	// setup
+	Stack = US(4, 3)
+
+	// success
+	err := MOD()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+}
+
+func TestGTE(t *testing.T) {
+	// setup
+	Stack = US(3, 2)
+
+	// success - true
+	err := GTE()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(2, 3)
+
+	// success - false
+	err = GTE()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+}
+
+func TestLTE(t *testing.T) {
+	// setup
+	Stack = US(2, 3)
+
+	// success - true
+	err := LTE()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(3, 2)
+
+	// success - false
+	err = LTE()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+}
