@@ -10,6 +10,7 @@ import (
 	"bufio"
 	"errors"
 	"flag"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -61,11 +62,14 @@ var ErrSymbolNone = errors.New("symbol does not exist")
 // 1.3: System Variables
 /////////////////////////
 
-// MainDebug is a boolean indicating if the main loop should print debug information.
-var MainDebug = false
+// Debug is a boolean indicating if the main loop should print debug information.
+var Debug = false
 
-// MainRun is a boolean indicating if the main loop should continue.
-var MainRun = true
+// ExitFunc is the default system exit function.
+var ExitFunc func(int) = os.Exit
+
+// Running is a boolean indicating if the main loop should continue.
+var Running = true
 
 // Stdin is the default input Reader.
 var Stdin = bufio.NewReader(os.Stdin)
@@ -569,15 +573,25 @@ func OUT() error {
 //                               Part 6: Main Functions                              //
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// 6.1: Error Functions
-////////////////////////
+// 6.1: Main Error Functions
+/////////////////////////////
 
 // die fatally prints a formatted error message.
+func die(s string) {
+	fmt.Fprintf(Stdout, "Error: %s.\n", s)
+	Stdout.Flush()
+	ExitFunc(1)
+}
 
 // try fatally prints a non-nil error.
+func try(err error) {
+	if err != nil {
+		die(err.Error())
+	}
+}
 
-// 6.2: Boot Functions
-///////////////////////
+// 6.2: Main Boot Functions
+////////////////////////////
 
 // init initialises the main Cairn program.
 

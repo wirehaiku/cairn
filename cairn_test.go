@@ -7,6 +7,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -658,3 +659,26 @@ func TestOUT(t *testing.T) {
 ///////////////////////////////////////////////////////////////////////////////////////
 //                          Part 6: Testing Main Functions                           //
 ///////////////////////////////////////////////////////////////////////////////////////
+
+// 6.1: Testing Main Error Functions
+/////////////////////////////////////
+
+func TestDie(t *testing.T) {
+	// setup
+	ExitFunc = func(int) {}
+	b := Bufs("")
+
+	// success
+	die("test")
+	assert.Equal(t, "Error: test.\n", b.String())
+}
+
+func TestTry(t *testing.T) {
+	// setup
+	ExitFunc = func(int) {}
+	b := Bufs("")
+
+	// success
+	try(errors.New("test"))
+	assert.Equal(t, "Error: test.\n", b.String())
+}
