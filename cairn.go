@@ -244,6 +244,21 @@ func Atomise(s string) (any, error) {
 	return nil, ErrSymbolNone
 }
 
+// AtomiseAll returns an atom slice from a token slice.
+func AtomiseAll(ss []string) ([]any, error) {
+	var as []any
+	for _, s := range ss {
+		a, err := Atomise(s)
+		if err != nil {
+			return nil, err
+		}
+
+		as = append(as, a)
+	}
+
+	return as, nil
+}
+
 // Evaluate evaluates an atom.
 func Evaluate(a any) error {
 	switch a := a.(type) {

@@ -233,6 +233,13 @@ func TestAtomise(t *testing.T) {
 	assert.Equal(t, ErrSymbolNone, err)
 }
 
+func TestAtomiseAll(t *testing.T) {
+	// success
+	as, err := AtomiseAll(SS("1", "2", "3"))
+	assert.Equal(t, AS(uint8(1), uint8(2), uint8(3)), as)
+	assert.NoError(t, err)
+}
+
 func TestEvaluate(t *testing.T) {
 	// setup
 	Stack = US()
