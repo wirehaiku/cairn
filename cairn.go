@@ -8,6 +8,8 @@ package main
 
 import (
 	"errors"
+	"strconv"
+	"strings"
 )
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -18,12 +20,12 @@ import (
 /////////////////////////
 
 // Commands is a map of symbols to built-in command functions.
-var Commands map[string]func() error
+var Commands = make(map[string]func() error)
 
 // Functions is a map of symbols to program-defined functions.
-var Functions map[string][]any
+var Functions = make(map[string][]any)
 
-// Queue is a first-in-first-out queue of parsed program atoms.
+// Queue is a first-in-first-out queue of parsed atoms.
 var Queue = make([]any, 0, 63356)
 
 // Registers is a fixed array of stored register values.
@@ -43,6 +45,12 @@ var ErrStackEmpty = errors.New("stack is empty")
 
 // ErrRegisterNone is the error for accessing a non-existent register.
 var ErrRegisterNone = errors.New("register does not exist")
+
+// ErrSymbolNone is the error for accessing a non-existent symbol
+var ErrSymbolNone = errors.New("symbol does not exist")
+
+// ErrAtomUndefined is the error for evaluating undefined atoms.
+var ErrAtomUndefined = errors.New("atom type is not defined")
 
 // 1.3: System Variables
 /////////////////////////
@@ -161,4 +169,77 @@ func Push(u uint8) {
 // PushAll appends an integer slice to the top of the Stack.
 func PushAll(us []uint8) {
 	Stack = append(Stack, us...)
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                       Part 3: Parsing & Evaluation Functions                      //
+///////////////////////////////////////////////////////////////////////////////////////
+
+// 3.1: Parsing Functions
+//////////////////////////
+
+// Clean returns an uppercase program string without comments.
+func Clean(s string) string {
+	var ss []string
+	for _, s := range strings.Split(s, "\n") {
+		s = strings.SplitN(s, "//", 2)[0]
+		s = strings.TrimSpace(s)
+		ss = append(ss, strings.ToUpper(s))
+	}
+
+	return strings.Join(ss, "\n")
+}
+
+// Tokenise returns a token slice from a clean program string.
+func Tokenise(s string) []string {
+	return strings.Fields(s)
+}
+
+// 3.2: Evaluation Functions
+/////////////////////////////
+
+// Atomise returns an atom from a token string.
+func Atomise(s string) (any, error) {
+	if u, err := strconv.ParseUint(s, 10, 8); err == nil {
+		return uint8(u), nil
+	}
+
+	if c, ok := Commands[s]; ok {
+		return c, nil
+	}
+
+	if as, ok := Functions[s]; ok {
+		return as, nil
+	}
+
+	return nil, ErrSymbolNone
+}
+
+// Evaluate evaluates an atom.
+func Evaluate(a any) error {
+	switch a := a.(type) {
+	case uint8:
+		Push(a)
+		return nil
+
+	case func() error:
+		return a()
+
+	case []any:
+		return EvaluateAll(a)
+
+	default:
+		return ErrAtomUndefined
+	}
+}
+
+// EvaluateAll evaluates an atom slice.
+func EvaluateAll(as []any) error {
+	for _, a := range as {
+		if err := Evaluate(a); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

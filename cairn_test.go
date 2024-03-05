@@ -17,6 +17,9 @@ import (
 // AS is a shorthand function for atom slices.
 func AS(as ...any) []any { return as }
 
+// SS is a shorthand function for string slices.
+func SS(ss ...string) []string { return ss }
+
 // US is a shorthand function for integer slices.
 func US(us ...uint8) []uint8 { return us }
 
@@ -158,4 +161,100 @@ func TestPushAll(t *testing.T) {
 	// success
 	PushAll(US(255, 255))
 	assert.Equal(t, US(255, 255), Stack)
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                   Part 3: Testing Parsing & Evaluation Functions                  //
+///////////////////////////////////////////////////////////////////////////////////////
+
+// 3.1: Testing Parsing Functions
+//////////////////////////////////
+
+func TestClean(t *testing.T) {
+	// success
+	s := Clean("a // comment\nb c // comment\n")
+	assert.Equal(t, "A\nB C\n", s)
+}
+
+func TestTokenise(t *testing.T) {
+	// success
+	ss := Tokenise("\t a  b  c \n")
+	assert.Equal(t, SS("a", "b", "c"), ss)
+}
+
+// 3.2: Testing Evaluation Functions
+/////////////////////////////////////
+
+func TestAtomise(t *testing.T) {
+	// setup
+	Commands["command"] = func() error { return nil }
+	Functions["function"] = []any{"nil"}
+
+	// success - uint8
+	a, err := Atomise("255")
+	assert.Equal(t, uint8(255), a)
+	assert.NoError(t, err)
+
+	// success - command
+	a, err = Atomise("command")
+	assert.NotNil(t, a)
+	assert.NoError(t, err)
+
+	// success - function
+	a, err = Atomise("function")
+	assert.Equal(t, AS("nil"), a)
+	assert.NoError(t, err)
+
+	// failure - ErrSymbolNone
+	a, err = Atomise("nope")
+	assert.Nil(t, a)
+	assert.Equal(t, ErrSymbolNone, err)
+}
+
+func TestEvaluate(t *testing.T) {
+	// setup
+	Stack = US()
+	f := func() error {
+		Push(255)
+		return nil
+	}
+
+	// success - uint8
+	err := Evaluate(uint8(255))
+	assert.Equal(t, US(255), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US()
+
+	// success - command
+	err = Evaluate(f)
+	assert.Equal(t, US(255), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US()
+
+	// success - function
+	err = Evaluate(AS(uint8(255)))
+	assert.Equal(t, US(255), Stack)
+	assert.NoError(t, err)
+
+	// failure - ErrAtomUndefined
+	err = Evaluate(false)
+	assert.Equal(t, ErrAtomUndefined, err)
+}
+
+func TestEvaluateAll(t *testing.T) {
+	// setup
+	Stack = US()
+
+	// success
+	err := EvaluateAll(AS(uint8(255)))
+	assert.Equal(t, US(255), Stack)
+	assert.NoError(t, err)
+
+	// failure - ErrAtomUndefined
+	err = EvaluateAll(AS(false))
+	assert.Equal(t, ErrAtomUndefined, err)
 }
