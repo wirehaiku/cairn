@@ -325,18 +325,14 @@ func Output(u uint8) error {
 type Flags struct {
 	Command string
 	Debug   bool
-	InFile  string
-	OutFile string
 }
 
 // ParseFlags returns a parsed Flags from an argument slice.
 func ParseFlags(ss []string) (*Flags, error) {
-	f := flag.NewFlagSet("cairn", flag.ContinueOnError)
-	fc := f.String("c", "", "execute single string")
-	fd := f.Bool("d", false, "enable debug mode")
-	fi := f.String("i", "", "STDIN or input file path")
-	fo := f.String("o", "", "STDOUT or output file path")
-	return &Flags{*fc, *fd, *fi, *fo}, f.Parse(ss)
+	fs := flag.NewFlagSet("cairn", flag.ContinueOnError)
+	fc := fs.String("c", "", "execute single string")
+	fd := fs.Bool("d", false, "enable debug mode")
+	return &Flags{*fc, *fd}, fs.Parse(ss)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

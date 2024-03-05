@@ -320,14 +320,12 @@ func TestOutput(t *testing.T) {
 
 func TestParseFlags(t *testing.T) {
 	// setup
-	ss := []string{"-c", "cmd", "-d", "-i", "inn.txt", "-o", "out.txt"}
+	ss := []string{"-c", "cmd", "-d"}
 
 	// success
-	f, err := ParseFlags(ss)
-	assert.Equal(t, "cmd", f.Command)
-	assert.Equal(t, true, f.Debug)
-	assert.Equal(t, "inn.txt", f.InFile)
-	assert.Equal(t, "out.txt", f.OutFile)
+	fs, err := ParseFlags(ss)
+	assert.Equal(t, "cmd", fs.Command)
+	assert.Equal(t, true, fs.Debug)
 	assert.NoError(t, err)
 }
 
