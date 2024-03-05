@@ -75,12 +75,14 @@ Name  | Form      | Description
 `XOR` | `a b → c` | Return true if only `a` or only `b` is true.
 `NOT` | `a → b`   | Return true if `a` is false.
 
-### Input / Output Commands
+### System Commands
 
-Name  | Form       | Description
------ | ---------- | -----------
-`INN` | `_ → a`    | Return an input ASCII character as an integer.
-`OUT` | `a → _`    | Write `a` as an ASCII character to output.
+Name  | Form    | Description
+----- | ------- | -----------
+`INN` | `_ → a` | Return an input ASCII character as an integer.
+`OUT` | `a → _` | Write `a` as an ASCII character to output.
+`BYE` | `_ → _` | Exit the program successfully.
+`DIE` | `a → _` | Exit the program with error code `a`.
 
 ### Flow Control Commands
 
