@@ -9,6 +9,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"flag"
 	"os"
 	"strconv"
 	"strings"
@@ -59,6 +60,9 @@ var ErrSymbolNone = errors.New("symbol does not exist")
 
 // 1.3: System Variables
 /////////////////////////
+
+// MainDebug is a boolean indicating if the main loop should print debug information.
+var MainDebug = false
 
 // MainRun is a boolean indicating if the main loop should continue.
 var MainRun = true
@@ -289,8 +293,22 @@ func Output(u uint8) error {
 ///////////////////////////////
 
 // Flags is a container for parsed command-line flags.
+type Flags struct {
+	Command string
+	Debug   bool
+	InFile  string
+	OutFile string
+}
 
-// ParseFlags returns a parsed Flags.
+// ParseFlags returns a parsed Flags from an argument slice.
+func ParseFlags(ss []string) (*Flags, error) {
+	f := flag.NewFlagSet("cairn", flag.ContinueOnError)
+	fc := f.String("c", "", "execute single string")
+	fd := f.Bool("d", false, "enable debug mode")
+	fi := f.String("i", "", "STDIN or input file path")
+	fo := f.String("o", "", "STDOUT or output file path")
+	return &Flags{*fc, *fd, *fi, *fo}, f.Parse(ss)
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //                             Part 5: Command Functions                             //

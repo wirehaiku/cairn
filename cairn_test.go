@@ -301,7 +301,18 @@ func TestOutput(t *testing.T) {
 // 4.2: Testing Command-Line Functions
 ///////////////////////////////////////
 
-func TestParseFlags(t *testing.T) {}
+func TestParseFlags(t *testing.T) {
+	// setup
+	ss := []string{"-c", "cmd", "-d", "-i", "inn.txt", "-o", "out.txt"}
+
+	// success
+	f, err := ParseFlags(ss)
+	assert.Equal(t, "cmd", f.Command)
+	assert.Equal(t, true, f.Debug)
+	assert.Equal(t, "inn.txt", f.InFile)
+	assert.Equal(t, "out.txt", f.OutFile)
+	assert.NoError(t, err)
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //                         Part 5: Testing Command Functions                         //
