@@ -260,10 +260,26 @@ func TestEvaluateAll(t *testing.T) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-//                         Part 4: Testing Command Functions                         //
+//                       Part 4: Testing Input/Output Functions                      //
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// 4.1: Testing Command Helper Functions
+// 4.1: Testing Standard IO Functions
+//////////////////////////////////////
+
+func TestInput(t *testing.T) {}
+
+func TestOutput(t *testing.T) {}
+
+// 4.2: Testing Command-Line Functions
+///////////////////////////////////////
+
+func TestParseFlags(t *testing.T) {}
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                         Part 5: Testing Command Functions                         //
+///////////////////////////////////////////////////////////////////////////////////////
+
+// 5.1: Testing Command Helper Functions
 /////////////////////////////////////////
 
 func TestBool(t *testing.T) {
@@ -276,7 +292,7 @@ func TestBool(t *testing.T) {
 	assert.Equal(t, uint8(0), u)
 }
 
-// 4.2: Testing Integer Commands
+// 5.2: Testing Integer Commands
 /////////////////////////////////
 
 func TestADD(t *testing.T) {
@@ -345,7 +361,7 @@ func TestLTE(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// 4.3: Memory Commands
+// 5.3: Memory Commands
 ////////////////////////
 
 func TestCLR(t *testing.T) {
@@ -410,3 +426,164 @@ func TestSET(t *testing.T) {
 	assert.Equal(t, uint8(123), Registers[0])
 	assert.NoError(t, err)
 }
+
+// 5.4: Testing Logic Commands
+///////////////////////////////
+
+func TestEQU(t *testing.T) {
+	// setup
+	Stack = US(2, 2)
+
+	// success - true
+	err := EQU()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(3, 2)
+
+	// success - false
+	err = EQU()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+}
+
+func TestNEQ(t *testing.T) {
+	// setup
+	Stack = US(3, 2)
+
+	// success - true
+	err := NEQ()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(2, 2)
+
+	// success - false
+	err = NEQ()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+}
+
+func TestAND(t *testing.T) {
+	// setup
+	Stack = US(1, 1)
+
+	// success
+	err := AND()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(1, 0)
+
+	// failure - a false
+	err = AND()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(0, 1)
+
+	// failure - b false
+	err = AND()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+}
+
+func TestORR(t *testing.T) {
+	// setup
+	Stack = US(0, 1)
+
+	// success - a true
+	err := ORR()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(1, 0)
+
+	// success - b true
+	err = ORR()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(1, 1)
+
+	// success - both true
+	err = ORR()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(0, 0)
+
+	// success - false
+	err = ORR()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+}
+
+func TestXOR(t *testing.T) {
+	// setup
+	Stack = US(0, 1)
+
+	// success - a true
+	err := XOR()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(1, 0)
+
+	// success - b true
+	err = XOR()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(1, 1)
+
+	// success - exclusive false
+	err = XOR()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(0, 0)
+
+	// success - false
+	err = XOR()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+}
+
+func TestNOT(t *testing.T) {
+	// setup
+	Stack = US(0)
+
+	// success - true
+	err := NOT()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(1)
+
+	// success - false
+	err = NOT()
+	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+}
+
+// 5.5: Testing Input/Output Commands
+//////////////////////////////////////
+
+// 5.6: Testing Flow Control Commands
+//////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                          Part 6: Testing Main Functions                           //
+///////////////////////////////////////////////////////////////////////////////////////

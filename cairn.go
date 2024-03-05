@@ -253,10 +253,28 @@ func EvaluateAll(as []any) error {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-//                             Part 4: Command Functions                             //
+//                           Part 4: Input/Output Functions                          //
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// 4.1: Command Helper Functions
+// 4.1: Standard IO Functions
+//////////////////////////////
+
+// Input returns an ASCII character as an integer.
+
+// Output writes an integer as an ASCII character to Stdout.
+
+// 4.2: Command-Line Functions
+///////////////////////////////
+
+// Flags is a container for parsed command-line flags.
+
+// ParseFlags returns a parsed Flags.
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                             Part 5: Command Functions                             //
+///////////////////////////////////////////////////////////////////////////////////////
+
+// 5.1: Command Helper Functions
 /////////////////////////////////
 
 // Bool returns a boolean as an integer.
@@ -268,7 +286,7 @@ func Bool(b bool) uint8 {
 	return 0
 }
 
-// 4.2: Integer Commands
+// 5.2: Integer Commands
 /////////////////////////
 
 // ADD (a b → c) returns a + b.
@@ -326,7 +344,7 @@ func LTE() error {
 	return nil
 }
 
-// 4.3: Memory Commands
+// 5.3: Memory Commands
 ////////////////////////
 
 // CLR (... → _) clears the stack.
@@ -393,29 +411,83 @@ func SET() error {
 	return SetRegister(us[0], us[1])
 }
 
-// 4.4: Logic Commands
+// 5.4: Logic Commands
 ///////////////////////
 
 // EQU (a b → c) returns true if a equals b.
+func EQU() error {
+	us, err := PopN(2)
+	if err != nil {
+		return nil
+	}
+
+	Push(Bool(us[0] == us[1]))
+	return nil
+}
 
 // NEQ (a b → c) returns true if a does not equal b.
+func NEQ() error {
+	us, err := PopN(2)
+	if err != nil {
+		return nil
+	}
+
+	Push(Bool(us[0] != us[1]))
+	return nil
+}
 
 // AND (a b → c) returns true if both a and b are true.
+func AND() error {
+	us, err := PopN(2)
+	if err != nil {
+		return nil
+	}
+
+	Push(Bool(us[0] != 0 && us[1] != 0))
+	return nil
+}
 
 // ORR (a b → c) returns true if either a or b are true.
+func ORR() error {
+	us, err := PopN(2)
+	if err != nil {
+		return nil
+	}
+
+	Push(Bool(us[0] != 0 || us[1] != 0))
+	return nil
+}
 
 // XOR (a b → c) returns true if only a or only b is true.
+func XOR() error {
+	us, err := PopN(2)
+	if err != nil {
+		return nil
+	}
+
+	Push(Bool(us[0] != 0 && us[1] == 0 || us[0] == 0 && us[1] != 0))
+	return nil
+}
 
 // NOT (a → b) returns true if a is false.
+func NOT() error {
+	u, err := Pop()
+	if err != nil {
+		return nil
+	}
 
-// 4.5: Input/Output Commands
+	Push(Bool(u == 0))
+	return nil
+}
+
+// 5.5: Input/Output Commands
 //////////////////////////////
 
 // INN (_ → a) returns an input ASCII character as an integer.
 
 // OUT (a → _) writes `a` as an ASCII character to output.
 
-// 4.6: Flow Control Commands
+// 5.6: Flow Control Commands
 //////////////////////////////
 
 // IFT (a → _) evaluates code if a is true.
@@ -425,24 +497,6 @@ func SET() error {
 // FOR (_ → _) evaluates code until register a is false.
 
 // DEF (_ → _) sets a symbol to a named function.
-
-///////////////////////////////////////////////////////////////////////////////////////
-//                           Part 5: Input/Output Functions                          //
-///////////////////////////////////////////////////////////////////////////////////////
-
-// 5.1: Standard IO Functions
-//////////////////////////////
-
-// Input returns an ASCII character as an integer.
-
-// Output writes an integer as an ASCII character to Stdout.
-
-// 5.2: Command-Line Functions
-///////////////////////////////
-
-// Flags is a container for parsed command-line flags.
-
-// ParseFlags returns a parsed Flags.
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //                               Part 6: Main Functions                              //
