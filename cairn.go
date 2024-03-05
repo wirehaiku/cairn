@@ -150,6 +150,16 @@ func SetRegister(i, u uint8) error {
 // 2.3: Stack Functions
 ////////////////////////
 
+// Dump returns the Stack's contents as a string.
+func Dump() string {
+	var ss []string
+	for _, u := range Stack {
+		ss = append(ss, strconv.FormatUint(uint64(u), 10))
+	}
+
+	return strings.Join(ss, " ")
+}
+
 // Pop removes and returns the top item on the Stack.
 func Pop() (uint8, error) {
 	if len(Stack) == 0 {

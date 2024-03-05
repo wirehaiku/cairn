@@ -127,6 +127,15 @@ func TestSetRegister(t *testing.T) {
 // 2.3: Testing Stack Functions
 ////////////////////////////////
 
+func TestDump(t *testing.T) {
+	// setup
+	Stack = US(1, 2, 3)
+
+	// success
+	s := Dump()
+	assert.Equal(t, "1 2 3", s)
+}
+
 func TestPop(t *testing.T) {
 	// setup
 	Stack = US(1)
