@@ -7,7 +7,6 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -665,25 +664,37 @@ func TestOUT(t *testing.T) {
 //                          Part 6: Testing Main Functions                           //
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// 6.1: Testing Main Error Functions
-/////////////////////////////////////
+// 6.1: Testing Main Helper Functions
+//////////////////////////////////////
 
-func TestDie(t *testing.T) {
+func TestPrint(t *testing.T) {
 	// setup
-	ExitFunc = func(int) {}
 	b := Bufs("")
 
 	// success
-	die("%s", "test")
-	assert.Equal(t, "Error: test.\n", b.String())
+	print("%s", "test")
+	assert.Equal(t, "test", b.String())
 }
 
-func TestTry(t *testing.T) {
+func TestPrompt(t *testing.T) {
 	// setup
-	ExitFunc = func(int) {}
-	b := Bufs("")
+	b := Bufs("test\n")
 
 	// success
-	try(errors.New("test"))
-	assert.Equal(t, "Error: test.\n", b.String())
+	s := prompt(">>> ")
+	assert.Equal(t, ">>> ", b.String())
+	assert.Equal(t, "test\n", s)
+}
+
+func TestOnce(t *testing.T) {
+	// setup
+	Commands["ADD"] = ADD
+	Queue = AS()
+	Stack = US()
+
+	// success
+	err := once("1 2 ADD")
+	assert.Empty(t, Queue)
+	assert.Equal(t, US(3), Stack)
+	assert.NoError(t, err)
 }

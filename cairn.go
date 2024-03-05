@@ -65,12 +65,6 @@ var ErrSymbolNone = errors.New("symbol does not exist")
 // Debug is a boolean indicating if the main loop should print debug information.
 var Debug = false
 
-// ExitFunc is the default system exit function.
-var ExitFunc func(int) = os.Exit
-
-// Running is a boolean indicating if the main loop should continue.
-var Running = true
-
 // Stdin is the default input Reader.
 var Stdin = bufio.NewReader(os.Stdin)
 
@@ -569,6 +563,10 @@ func OUT() error {
 	return Output(u)
 }
 
+// BYE
+
+// DIE
+
 // 5.6: Flow Control Commands
 //////////////////////////////
 
@@ -584,22 +582,44 @@ func OUT() error {
 //                               Part 6: Main Functions                              //
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// 6.1: Main Error Functions
-/////////////////////////////
+// 6.1: Main Helper Functions
+//////////////////////////////
 
-// die fatally prints a formatted error message.
-func die(s string, vs ...any) {
-	s = fmt.Sprintf(s, vs...)
-	fmt.Fprintf(Stdout, "Error: %s.\n", s)
+// print prints a formatted string to Stdout.
+func print(s string, vs ...any) {
+	fmt.Fprintf(Stdout, s, vs...)
 	Stdout.Flush()
-	ExitFunc(1)
 }
 
-// try fatally prints a non-nil error.
-func try(err error) {
+// prompt prints a prompt and returns an input string.
+func prompt(s string) string {
+	fmt.Fprint(Stdout, s)
+	Stdout.Flush()
+	s, _ = Stdin.ReadString('\n')
+	return s
+}
+
+// once evaluates a program string once.
+func once(s string) error {
+	ss := Tokenise(Clean(s))
+	as, err := AtomiseAll(ss)
 	if err != nil {
-		die(err.Error())
+		return nil
 	}
+
+	EnqueueAll(as)
+	for len(Queue) > 0 {
+		a, err := Dequeue()
+		if err != nil {
+			return nil
+		}
+
+		if err := Evaluate(a); err != nil {
+			return nil
+		}
+	}
+
+	return nil
 }
 
 // 6.2: Main Boot Functions
