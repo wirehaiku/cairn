@@ -39,6 +39,9 @@ var Stack = make([]uint8, 0, 65536)
 // 1.2: Error Definitions
 //////////////////////////
 
+// ErrAtomUndefined is the error for evaluating undefined atoms.
+var ErrAtomUndefined = errors.New("atom type is not defined")
+
 // ErrQueueEmpty is the error for dequeuing an empty Queue.
 var ErrQueueEmpty = errors.New("queue is empty")
 
@@ -48,11 +51,11 @@ var ErrStackEmpty = errors.New("stack is empty")
 // ErrRegisterNone is the error for accessing a non-existent register.
 var ErrRegisterNone = errors.New("register does not exist")
 
+// ErrStreamFail is the error for failed I/O operations.
+var ErrStreamFail = errors.New("I/O failed")
+
 // ErrSymbolNone is the error for accessing a non-existent symbol
 var ErrSymbolNone = errors.New("symbol does not exist")
-
-// ErrAtomUndefined is the error for evaluating undefined atoms.
-var ErrAtomUndefined = errors.New("atom type is not defined")
 
 // 1.3: System Variables
 /////////////////////////
@@ -260,8 +263,27 @@ func EvaluateAll(as []any) error {
 //////////////////////////////
 
 // Input returns an ASCII character as an integer.
+func Input() (uint8, error) {
+	r, err := Stdin.ReadByte()
+	if err != nil {
+		return 0, ErrStreamFail
+	}
+
+	return uint8(r), nil
+}
 
 // Output writes an integer as an ASCII character to Stdout.
+func Output(u uint8) error {
+	if err := Stdout.WriteByte(u); err != nil {
+		return ErrStreamFail
+	}
+
+	if err := Stdout.Flush(); err != nil {
+		return ErrStreamFail
+	}
+
+	return nil
+}
 
 // 4.2: Command-Line Functions
 ///////////////////////////////

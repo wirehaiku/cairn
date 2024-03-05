@@ -5,6 +5,8 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,6 +24,16 @@ func SS(ss ...string) []string { return ss }
 
 // US is a shorthand function for integer slices.
 func US(us ...uint8) []uint8 { return us }
+
+// Bufs sets Stdin and Stdout to mock buffers, populates Stdin with a string and
+// returns the Stdout buffer.
+func Bufs(s string) *bytes.Buffer {
+	inn := bytes.NewBufferString(s)
+	out := bytes.NewBuffer(nil)
+	Stdin = bufio.NewReader(inn)
+	Stdout = bufio.NewWriter(out)
+	return out
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //                        Part 2: Testing Collection Functions                       //
@@ -266,9 +278,25 @@ func TestEvaluateAll(t *testing.T) {
 // 4.1: Testing Standard IO Functions
 //////////////////////////////////////
 
-func TestInput(t *testing.T) {}
+func TestInput(t *testing.T) {
+	// setup
+	Bufs("A")
 
-func TestOutput(t *testing.T) {}
+	// success
+	u, err := Input()
+	assert.Equal(t, uint8(65), u)
+	assert.NoError(t, err)
+}
+
+func TestOutput(t *testing.T) {
+	// setup
+	b := Bufs("")
+
+	// success
+	err := Output(65)
+	assert.Equal(t, "A", b.String())
+	assert.NoError(t, err)
+}
 
 // 4.2: Testing Command-Line Functions
 ///////////////////////////////////////
