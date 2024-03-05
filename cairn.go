@@ -7,7 +7,9 @@
 package main
 
 import (
+	"bufio"
 	"errors"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -57,6 +59,12 @@ var ErrAtomUndefined = errors.New("atom type is not defined")
 
 // MainRun is a boolean indicating if the main loop should continue.
 var MainRun = true
+
+// Stdin is the default input Reader.
+var Stdin = bufio.NewReader(os.Stdin)
+
+// Stdout is the default output Writer.
+var Stdout = bufio.NewWriter(os.Stdout)
 
 // VersionDate is the date of the current Cairn version.
 var VersionDate = "2024-03-05"
@@ -263,7 +271,7 @@ func Bool(b bool) uint8 {
 // 4.2: Integer Commands
 /////////////////////////
 
-// ADD (a b > c) returns a + b.
+// ADD (a b → c) returns a + b.
 func ADD() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -274,7 +282,7 @@ func ADD() error {
 	return nil
 }
 
-// SUB (a b > c) returns a - b.
+// SUB (a b → c) returns a - b.
 func SUB() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -285,7 +293,7 @@ func SUB() error {
 	return nil
 }
 
-// MOD (a b > c) returns a % b.
+// MOD (a b → c) returns a % b.
 func MOD() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -296,7 +304,7 @@ func MOD() error {
 	return nil
 }
 
-// GTE (a b > c) returns a >= b.
+// GTE (a b → c) returns a >= b.
 func GTE() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -307,7 +315,7 @@ func GTE() error {
 	return nil
 }
 
-// LTE (a b > c) returns a <= b.
+// LTE (a b → c) returns a <= b.
 func LTE() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -321,13 +329,13 @@ func LTE() error {
 // 4.3: Memory Commands
 ////////////////////////
 
-// CLR (... > _) clears the stack.
+// CLR (... → _) clears the stack.
 func CLR() error {
 	Stack = make([]uint8, 0, 65536)
 	return nil
 }
 
-// DUP (a > a a) duplicates the top stack item.
+// DUP (a → a a) duplicates the top stack item.
 func DUP() error {
 	u, err := Pop()
 	if err != nil {
@@ -338,7 +346,7 @@ func DUP() error {
 	return nil
 }
 
-// DRP (a b > a) deletes the top stack item.
+// DRP (a b → a) deletes the top stack item.
 func DRP() error {
 	_, err := Pop()
 	if err != nil {
@@ -348,7 +356,7 @@ func DRP() error {
 	return nil
 }
 
-// SWP (a b > b a) swaps the top two stack items.
+// SWP (a b → b a) swaps the top two stack items.
 func SWP() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -359,7 +367,7 @@ func SWP() error {
 	return nil
 }
 
-// GET (a > b) returns the value of register a.
+// GET (a → b) returns the value of register a.
 func GET() error {
 	u, err := Pop()
 	if err != nil {
@@ -375,7 +383,7 @@ func GET() error {
 	return nil
 }
 
-// SET (a b > _) sets a to register b.
+// SET (a b → _) sets a to register b.
 func SET() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -384,3 +392,72 @@ func SET() error {
 
 	return SetRegister(us[0], us[1])
 }
+
+// 4.4: Logic Commands
+///////////////////////
+
+// EQU (a b → c) returns true if a equals b.
+
+// NEQ (a b → c) returns true if a does not equal b.
+
+// AND (a b → c) returns true if both a and b are true.
+
+// ORR (a b → c) returns true if either a or b are true.
+
+// XOR (a b → c) returns true if only a or only b is true.
+
+// NOT (a → b) returns true if a is false.
+
+// 4.5: Input/Output Commands
+//////////////////////////////
+
+// INN (_ → a) returns an input ASCII character as an integer.
+
+// OUT (a → _) writes `a` as an ASCII character to output.
+
+// 4.6: Flow Control Commands
+//////////////////////////////
+
+// IFT (a → _) evaluates code if a is true.
+
+// IFF (a → _) evaluates code if a is false.
+
+// FOR (_ → _) evaluates code until register a is false.
+
+// DEF (_ → _) sets a symbol to a named function.
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                           Part 5: Input/Output Functions                          //
+///////////////////////////////////////////////////////////////////////////////////////
+
+// 5.1: Standard IO Functions
+//////////////////////////////
+
+// Input returns an ASCII character as an integer.
+
+// Output writes an integer as an ASCII character to Stdout.
+
+// 5.2: Command-Line Functions
+///////////////////////////////
+
+// Flags is a container for parsed command-line flags.
+
+// ParseFlags returns a parsed Flags.
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                               Part 6: Main Functions                              //
+///////////////////////////////////////////////////////////////////////////////////////
+
+// 6.1: Error Functions
+////////////////////////
+
+// die fatally prints a formatted error message.
+
+// try fatally prints a non-nil error.
+
+// 6.2: Boot Functions
+///////////////////////
+
+// init initialises the main Cairn program.
+
+// main executes the main Cairn program.

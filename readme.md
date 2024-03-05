@@ -68,12 +68,12 @@ Name  | Form        | Description
 
 Name  | Form      | Description
 ----- | --------- | -----------
-`EQU` | `a b → c` | Return `1` if `a` equals `b`.
-`NEQ` | `a b → c` | Return `1` if `a` does not equal `b`.
-`AND` | `a b → c` | Return `1` if both `a` and `b` are true.
-`ORR` | `a b → c` | Return `1` if either `a` or `b` are true.
-`XOR` | `a b → c` | Return `1` if only `a` or only `b` is true.
-`NOT` | `a → b`   | Return `1` if `a` is false, `0` if true.
+`EQU` | `a b → c` | Return true if `a` equals `b`.
+`NEQ` | `a b → c` | Return true if `a` does not equal `b`.
+`AND` | `a b → c` | Return true if both `a` and `b` are true.
+`ORR` | `a b → c` | Return true if either `a` or `b` are true.
+`XOR` | `a b → c` | Return true if only `a` or only `b` is true.
+`NOT` | `a → b`   | Return true if `a` is false.
 
 ### Input / Output Commands
 
@@ -81,7 +81,6 @@ Name  | Form       | Description
 ----- | ---------- | -----------
 `INN` | `_ → a`    | Return an input ASCII character as an integer.
 `OUT` | `a → _`    | Write `a` as an ASCII character to output.
-`NUM` | `a → a...` | Return the ASCII character(s) of the integer `a`.
 
 ### Flow Control Commands
 
@@ -89,19 +88,19 @@ These commands are special as they wrap smaller pieces of code and execute them 
 
 #### `IFT [CODE] END` · `a → _`
 
-Execute `[CODE]` if the top item is true.
+Evaluate `[CODE]` if `a` is true.
 
 #### `IFF [CODE] END` · `a → _`
 
-Execute `[CODE]` if the top item is false.
+Evaluate `[CODE]` if `a` is false.
 
-#### `FOR [REG] [CODE] END` · `_ → _`
+#### `FOR [R] [CODE] END` · `_ → _`
 
-Execute `[CODE]` in a continuous loop until the value of register `[REG]` (0 to 7) is false.
+Evaluate `[CODE]` in a continuous loop until register `[R]` is false.
 
-#### `DEF [NAME] [CODE] END` · `_ → _`
+#### `DEF [SYMBOL] [CODE] END` · `_ → _`
 
-Set the user-defined function `[NAME]` to `[CODE]`. After executing this command, the symbol `[NAME]` will always execute `[CODE]`. Functions can be re-defined at any time.
+Set `[SYMBOL]` to the user-defined function `[CODE]`.
 
 ## Contributing
 
