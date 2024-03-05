@@ -32,11 +32,11 @@ func US(us ...uint8) []uint8 { return us }
 
 func TestDequeue(t *testing.T) {
 	// setup
-	Queue = AS("a")
+	Queue = AS("A")
 
 	// success
 	a, err := Dequeue()
-	assert.Equal(t, "a", a)
+	assert.Equal(t, "A", a)
 	assert.NoError(t, err)
 
 	// failure - ErrQueueEmpty
@@ -47,16 +47,16 @@ func TestDequeue(t *testing.T) {
 
 func TestDequeueTo(t *testing.T) {
 	// setup
-	Queue = AS("a", "b", "end", "c")
+	Queue = AS("A", "B", "END", "C")
 
 	// success
-	as, err := DequeueTo("end")
-	assert.Equal(t, AS("a", "b"), as)
-	assert.Equal(t, AS("c"), Queue)
+	as, err := DequeueTo("END")
+	assert.Equal(t, AS("A", "B"), as)
+	assert.Equal(t, AS("C"), Queue)
 	assert.NoError(t, err)
 
 	// failure - ErrQueueEmpty
-	as, err = DequeueTo("end")
+	as, err = DequeueTo("END")
 	assert.Empty(t, as)
 	assert.Empty(t, Queue)
 	assert.Equal(t, ErrQueueEmpty, err)
@@ -67,8 +67,8 @@ func TestEnqueue(t *testing.T) {
 	Queue = AS()
 
 	// success
-	Enqueue("a")
-	assert.Equal(t, AS("a"), Queue)
+	Enqueue("A")
+	assert.Equal(t, AS("A"), Queue)
 }
 
 func TestEnqueueAll(t *testing.T) {
@@ -76,8 +76,8 @@ func TestEnqueueAll(t *testing.T) {
 	Queue = AS()
 
 	// success
-	EnqueueAll(AS("a", "b"))
-	assert.Equal(t, AS("a", "b"), Queue)
+	EnqueueAll(AS("A", "B"))
+	assert.Equal(t, AS("A", "B"), Queue)
 }
 
 // 2.2: Testing Register Functions
@@ -85,15 +85,15 @@ func TestEnqueueAll(t *testing.T) {
 
 func TestGetRegister(t *testing.T) {
 	// setup
-	Registers[0] = 255
+	Registers[0] = 123
 
 	// success
 	u, err := GetRegister(0)
-	assert.Equal(t, uint8(255), u)
+	assert.Equal(t, uint8(123), u)
 	assert.NoError(t, err)
 
 	// failure - ErrRegisterNone
-	u, err = GetRegister(99)
+	u, err = GetRegister(8)
 	assert.Zero(t, u)
 	assert.Equal(t, ErrRegisterNone, err)
 }
@@ -103,12 +103,12 @@ func TestSetRegister(t *testing.T) {
 	Registers[0] = 0
 
 	// success
-	err := SetRegister(0, 255)
-	assert.Equal(t, uint8(255), Registers[0])
+	err := SetRegister(0, 123)
+	assert.Equal(t, uint8(123), Registers[0])
 	assert.NoError(t, err)
 
 	// failure - ErrRegisterNone
-	err = SetRegister(99, 255)
+	err = SetRegister(8, 123)
 	assert.Equal(t, ErrRegisterNone, err)
 }
 
@@ -117,11 +117,11 @@ func TestSetRegister(t *testing.T) {
 
 func TestPop(t *testing.T) {
 	// setup
-	Stack = US(255)
+	Stack = US(1)
 
 	// success
 	u, err := Pop()
-	assert.Equal(t, uint8(255), u)
+	assert.Equal(t, uint8(1), u)
 	assert.NoError(t, err)
 
 	// failure - ErrStackEmpty
@@ -132,11 +132,11 @@ func TestPop(t *testing.T) {
 
 func TestPopN(t *testing.T) {
 	// setup
-	Stack = US(255, 255)
+	Stack = US(1, 2)
 
 	// success
 	us, err := PopN(2)
-	assert.Equal(t, US(255, 255), us)
+	assert.Equal(t, US(2, 1), us)
 	assert.NoError(t, err)
 
 	// failure - ErrStackEmpty
@@ -150,8 +150,8 @@ func TestPush(t *testing.T) {
 	Stack = US()
 
 	// success
-	Push(255)
-	assert.Equal(t, US(255), Stack)
+	Push(1)
+	assert.Equal(t, US(1), Stack)
 }
 
 func TestPushAll(t *testing.T) {
@@ -159,8 +159,8 @@ func TestPushAll(t *testing.T) {
 	Stack = US()
 
 	// success
-	PushAll(US(255, 255))
-	assert.Equal(t, US(255, 255), Stack)
+	PushAll(US(1, 2))
+	assert.Equal(t, US(1, 2), Stack)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -178,8 +178,8 @@ func TestClean(t *testing.T) {
 
 func TestTokenise(t *testing.T) {
 	// success
-	ss := Tokenise("\t a  b  c \n")
-	assert.Equal(t, SS("a", "b", "c"), ss)
+	ss := Tokenise("\t A  B  C \n")
+	assert.Equal(t, SS("A", "B", "C"), ss)
 }
 
 // 3.2: Testing Evaluation Functions
@@ -187,22 +187,22 @@ func TestTokenise(t *testing.T) {
 
 func TestAtomise(t *testing.T) {
 	// setup
-	Commands["command"] = func() error { return nil }
-	Functions["function"] = []any{"nil"}
+	Commands["CMD"] = func() error { return nil }
+	Functions["FUN"] = []any{"A"}
 
 	// success - uint8
-	a, err := Atomise("255")
-	assert.Equal(t, uint8(255), a)
+	a, err := Atomise("1")
+	assert.Equal(t, uint8(1), a)
 	assert.NoError(t, err)
 
 	// success - command
-	a, err = Atomise("command")
+	a, err = Atomise("CMD")
 	assert.NotNil(t, a)
 	assert.NoError(t, err)
 
 	// success - function
-	a, err = Atomise("function")
-	assert.Equal(t, AS("nil"), a)
+	a, err = Atomise("FUN")
+	assert.Equal(t, AS("A"), a)
 	assert.NoError(t, err)
 
 	// failure - ErrSymbolNone
@@ -215,13 +215,13 @@ func TestEvaluate(t *testing.T) {
 	// setup
 	Stack = US()
 	f := func() error {
-		Push(255)
+		Push(1)
 		return nil
 	}
 
 	// success - uint8
-	err := Evaluate(uint8(255))
-	assert.Equal(t, US(255), Stack)
+	err := Evaluate(uint8(1))
+	assert.Equal(t, US(1), Stack)
 	assert.NoError(t, err)
 
 	// setup
@@ -229,15 +229,15 @@ func TestEvaluate(t *testing.T) {
 
 	// success - command
 	err = Evaluate(f)
-	assert.Equal(t, US(255), Stack)
+	assert.Equal(t, US(1), Stack)
 	assert.NoError(t, err)
 
 	// setup
 	Stack = US()
 
 	// success - function
-	err = Evaluate(AS(uint8(255)))
-	assert.Equal(t, US(255), Stack)
+	err = Evaluate(AS(uint8(1)))
+	assert.Equal(t, US(1), Stack)
 	assert.NoError(t, err)
 
 	// failure - ErrAtomUndefined
@@ -250,8 +250,8 @@ func TestEvaluateAll(t *testing.T) {
 	Stack = US()
 
 	// success
-	err := EvaluateAll(AS(uint8(255)))
-	assert.Equal(t, US(255), Stack)
+	err := EvaluateAll(AS(uint8(1)))
+	assert.Equal(t, US(1), Stack)
 	assert.NoError(t, err)
 
 	// failure - ErrAtomUndefined
@@ -342,5 +342,71 @@ func TestLTE(t *testing.T) {
 	// success - false
 	err = LTE()
 	assert.Equal(t, US(0), Stack)
+	assert.NoError(t, err)
+}
+
+// 4.3: Memory Commands
+////////////////////////
+
+func TestCLR(t *testing.T) {
+	// setup
+	Stack = US(1, 2, 3)
+
+	// success
+	err := CLR()
+	assert.Empty(t, Stack)
+	assert.NoError(t, err)
+}
+
+func TestDUP(t *testing.T) {
+	// setup
+	Stack = US(1)
+
+	// success
+	err := DUP()
+	assert.Equal(t, US(1, 1), Stack)
+	assert.NoError(t, err)
+}
+
+func TestDRP(t *testing.T) {
+	// setup
+	Stack = US(1, 2)
+
+	// success
+	err := DRP()
+	assert.Equal(t, US(1), Stack)
+	assert.NoError(t, err)
+}
+
+func TestSWP(t *testing.T) {
+	// setup
+	Stack = US(1, 2)
+
+	// success
+	err := SWP()
+	assert.Equal(t, US(2, 1), Stack)
+	assert.NoError(t, err)
+}
+
+func TestGET(t *testing.T) {
+	// setup
+	Registers[0] = 123
+	Stack = US(0)
+
+	// success
+	err := GET()
+	assert.Equal(t, US(123), Stack)
+	assert.NoError(t, err)
+}
+
+func TestSET(t *testing.T) {
+	// setup
+	Registers[0] = 0
+	Stack = US(123, 0)
+
+	// success
+	err := SET()
+	assert.Empty(t, Stack)
+	assert.Equal(t, uint8(123), Registers[0])
 	assert.NoError(t, err)
 }

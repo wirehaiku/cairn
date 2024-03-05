@@ -263,7 +263,7 @@ func Bool(b bool) uint8 {
 // 4.2: Integer Commands
 /////////////////////////
 
-// ADD (a b > c) adds the top two stack items.
+// ADD (a b > c) returns a + b.
 func ADD() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -274,7 +274,7 @@ func ADD() error {
 	return nil
 }
 
-// SUB (a b > c) subtracts the top two stack items.
+// SUB (a b > c) returns a - b.
 func SUB() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -285,7 +285,7 @@ func SUB() error {
 	return nil
 }
 
-// MOD (a b > c) modulos the top two stack items.
+// MOD (a b > c) returns a % b.
 func MOD() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -296,7 +296,7 @@ func MOD() error {
 	return nil
 }
 
-// GTE (a b > c) returns true if a is greater than or equal to b.
+// GTE (a b > c) returns a >= b.
 func GTE() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -307,7 +307,7 @@ func GTE() error {
 	return nil
 }
 
-// LTE (a b > c) returns true if a is less than or equal to b.
+// LTE (a b > c) returns a <= b.
 func LTE() error {
 	us, err := PopN(2)
 	if err != nil {
@@ -316,4 +316,71 @@ func LTE() error {
 
 	Push(Bool(us[1] <= us[0]))
 	return nil
+}
+
+// 4.3: Memory Commands
+////////////////////////
+
+// CLR (... > _) clears the stack.
+func CLR() error {
+	Stack = make([]uint8, 0, 65536)
+	return nil
+}
+
+// DUP (a > a a) duplicates the top stack item.
+func DUP() error {
+	u, err := Pop()
+	if err != nil {
+		return err
+	}
+
+	PushAll([]uint8{u, u})
+	return nil
+}
+
+// DRP (a b > a) deletes the top stack item.
+func DRP() error {
+	_, err := Pop()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// SWP (a b > b a) swaps the top two stack items.
+func SWP() error {
+	us, err := PopN(2)
+	if err != nil {
+		return err
+	}
+
+	PushAll([]uint8{us[0], us[1]})
+	return nil
+}
+
+// GET (a > b) returns the value of register a.
+func GET() error {
+	u, err := Pop()
+	if err != nil {
+		return nil
+	}
+
+	u, err = GetRegister(u)
+	if err != nil {
+		return nil
+	}
+
+	Push(u)
+	return nil
+}
+
+// SET (a b > _) sets a to register b.
+func SET() error {
+	us, err := PopN(2)
+	if err != nil {
+		return nil
+	}
+
+	return SetRegister(us[0], us[1])
 }

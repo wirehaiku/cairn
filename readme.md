@@ -47,11 +47,11 @@ An ellipsis (`...`) indicates a variable number of arguments.
 
 Name  | Form      | Description
 ----- | --------- | -----------
-`ADD` | `a b → c` | Add the top two items (`a` + `b`).
-`SUB` | `a b → c` | Subtract the top two items (`a` - `b`).
-`MOD` | `a b → c` | Modulo the top two items (`a` % `b`).
-`GTE` | `a b → c` | Return `1` if `a` is greater than or equal to `b`.
-`LTE` | `a b → c` | Return `1` if `a` is less than or equal to `b`.
+`ADD` | `a b → c` | Return `a` + `b`.
+`SUB` | `a b → c` | Return `a` - `b`.
+`MOD` | `a b → c` | Return `a` % `b`.
+`GTE` | `a b → c` | Return `a` >= `b`.
+`LTE` | `a b → c` | Return `a` <= `b`.
 
 ### Memory Commands
 
@@ -61,9 +61,8 @@ Name  | Form        | Description
 `DUP` | `a → a a`   | Duplicate the top item.
 `DRP` | `a b → a`   | Delete the top item.
 `SWP` | `a b → b a` | Swap the top two items.
-`LEN` | `_ → a`     | Return the number of items on the stack.
-`GET` | `a → b`     | Return the value of register `a` (0 to 7).
-`SET` | `a b → _`   | Set the value `a` to register `b` (0 to 7).
+`GET` | `a → b`     | Return the value of register `a`.
+`SET` | `a b → _`   | Set the value `a` to register `b`.
 
 ### Logic Commands
 
