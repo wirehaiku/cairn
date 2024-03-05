@@ -38,7 +38,10 @@ Zero (`0`) integers are considered **false**, all other integers are **true**. I
 
 **Commands** are built-in functions with callable symbols. Each command operates on the stack, *popping* arguments off and *pushing* their results back on.
 
-In the following tables, the "form" column shows each command's effect. The items before the arrow show the stack *before* the command is executed (with the rightmost item at the top) and the items after show the stack *after* execution. An underscore (`_`) indicates a command does not take or return arguments.
+In the following tables, the "form" column shows each command's effect. The items before the arrow show the stack *before* the command is executed (with the rightmost item at the top) and the items after show the stack *after* execution.
+
+An underscore (`_`) indicates a command does not take or return arguments.
+An ellipsis (`...`) indicates a variable number of arguments.
 
 ### Integer Commands
 
@@ -54,6 +57,7 @@ Name  | Form      | Description
 
 Name  | Form        | Description
 ----- | ----------- | -----------
+`CLR` | `... → _`   | Clear the stack.
 `DUP` | `a → a a`   | Duplicate the top item.
 `DRP` | `a b → a`   | Delete the top item.
 `SWP` | `a b → b a` | Swap the top two items.
