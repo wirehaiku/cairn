@@ -545,8 +545,8 @@ func NOT() error {
 	return nil
 }
 
-// 5.5: Input/Output Commands
-//////////////////////////////
+// 5.5: System Commands
+////////////////////////
 
 // INN (_ → a) returns an input ASCII character as an integer.
 func INN() error {

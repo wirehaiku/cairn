@@ -632,8 +632,8 @@ func TestNOT(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// 5.5: Testing Input/Output Commands
-//////////////////////////////////////
+// 5.5: Testing System Commands
+////////////////////////////////
 
 func TestINN(t *testing.T) {
 	// setup
