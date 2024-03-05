@@ -563,9 +563,9 @@ func OUT() error {
 	return Output(u)
 }
 
-// BYE
+// BYE (`_ → _`) exits the program successfully.
 
-// DIE
+// DIE (`a → _`) exits the program with error code `a`.
 
 // 5.6: Flow Control Commands
 //////////////////////////////
@@ -626,5 +626,46 @@ func once(s string) error {
 ////////////////////////////
 
 // init initialises the main Cairn program.
+func init() {
+	Commands = map[string]func() error{
+		"ADD": ADD, "SUB": SUB, "MOD": MOD, "GTE": GTE, "LTE": LTE,
+		"CLR": CLR, "DUP": DUP, "DRP": DRP, "SWP": SWP, "GET": GET, "SET": SET,
+		"EQU": EQU, "NEQ": NEQ, "AND": AND, "ORR": ORR, "XOR": XOR, "NOT": NOT,
+		"INN": INN, "OUT": OUT,
+		// "IFT": IFT, "IFF": IFF, "FOR": FOR, "DEF": DEF,
+	}
+}
 
 // main executes the main Cairn program.
+func main() {
+	// Parse command-line flags.
+	fs, err := ParseFlags(os.Args[1:])
+	if err != nil {
+		print(err.Error())
+		os.Exit(1)
+	}
+
+	// Set environment according to flags.
+	Debug = fs.Debug
+
+	// Run REPL or single command.
+	switch {
+	case fs.Command != "":
+		if err := once(fs.Command); err != nil {
+			print("Error: %s.\n", err.Error())
+		}
+
+	default:
+		print("Cairn version %s (%s).\n", VersionNums, VersionDate)
+
+		for {
+			s := prompt(">>> ")
+			if err := once(s); err != nil {
+				print("Error: %s.\n", err.Error())
+
+			} else if len(Stack) > 0 {
+				print("[ %s ]\n", Dump())
+			}
+		}
+	}
+}
