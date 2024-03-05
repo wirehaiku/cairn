@@ -534,8 +534,25 @@ func NOT() error {
 //////////////////////////////
 
 // INN (_ → a) returns an input ASCII character as an integer.
+func INN() error {
+	u, err := Input()
+	if err != nil {
+		return err
+	}
+
+	Push(u)
+	return nil
+}
 
 // OUT (a → _) writes `a` as an ASCII character to output.
+func OUT() error {
+	u, err := Pop()
+	if err != nil {
+		return err
+	}
+
+	return Output(u)
+}
 
 // 5.6: Flow Control Commands
 //////////////////////////////

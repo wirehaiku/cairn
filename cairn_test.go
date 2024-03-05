@@ -629,6 +629,29 @@ func TestNOT(t *testing.T) {
 // 5.5: Testing Input/Output Commands
 //////////////////////////////////////
 
+func TestINN(t *testing.T) {
+	// setup
+	Stack = US()
+	Bufs("A")
+
+	// success
+	err := INN()
+	assert.Equal(t, US(65), Stack)
+	assert.NoError(t, err)
+}
+
+func TestOUT(t *testing.T) {
+	// setup
+	Stack = US(65)
+	b := Bufs("")
+
+	// success
+	err := OUT()
+	assert.Empty(t, Stack)
+	assert.Equal(t, "A", b.String())
+	assert.NoError(t, err)
+}
+
 // 5.6: Testing Flow Control Commands
 //////////////////////////////////////
 
