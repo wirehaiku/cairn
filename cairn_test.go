@@ -674,7 +674,7 @@ func TestDie(t *testing.T) {
 	b := Bufs("")
 
 	// success
-	die("test")
+	die("%s", "test")
 	assert.Equal(t, "Error: test.\n", b.String())
 }
 

@@ -588,7 +588,8 @@ func OUT() error {
 /////////////////////////////
 
 // die fatally prints a formatted error message.
-func die(s string) {
+func die(s string, vs ...any) {
+	s = fmt.Sprintf(s, vs...)
 	fmt.Fprintf(Stdout, "Error: %s.\n", s)
 	Stdout.Flush()
 	ExitFunc(1)
