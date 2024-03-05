@@ -24,19 +24,22 @@ var Commands map[string]func() error
 var Functions map[string][]any
 
 // Queue is a first-in-first-out queue of parsed program atoms.
-var Queue []any
+var Queue = make([]any, 0, 63356)
 
 // Registers is a fixed array of stored register values.
 var Registers [8]uint8
 
 // Stack is a last-in-first-out stack of stored memory values.
-var Stack []uint8
+var Stack = make([]uint8, 0, 65536)
 
 // 1.2: Error Definitions
 //////////////////////////
 
 // ErrQueueEmpty is the error for dequeuing the empty Queue.
-var ErrQueueEmpty = errors.New("queue empty")
+var ErrQueueEmpty = errors.New("queue is empty")
+
+// ErrRegisterNone is the error for accessing a non-existent register.
+var ErrRegisterNone = errors.New("register does not exist")
 
 // 1.3: System Variables
 /////////////////////////
@@ -94,4 +97,26 @@ func Enqueue(a any) {
 // EnqueueAll appends an atom slice to the end of the Queue.
 func EnqueueAll(as []any) {
 	Queue = append(Queue, as...)
+}
+
+// 2.2: Register Functions
+///////////////////////////
+
+// GetRegister returns the value of a given register.
+func GetRegister(i uint8) (uint8, error) {
+	if i > 7 {
+		return 0, ErrRegisterNone
+	}
+
+	return Registers[int(i)], nil
+}
+
+// SetRegister sets the value of a given register.
+func SetRegister(i, u uint8) error {
+	if i > 7 {
+		return ErrRegisterNone
+	}
+
+	Registers[int(i)] = u
+	return nil
 }
