@@ -14,8 +14,11 @@ import (
 //                         Part 1: Helper Globals & Functions                        //
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// AS returns any value slice as an atom slice.
+// AS is a shorthand function for atom slices.
 func AS(as ...any) []any { return as }
+
+// US is a shorthand function for integer slices.
+func US(us ...uint8) []uint8 { return us }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //                        Part 2: Testing Collection Functions                       //
@@ -70,7 +73,7 @@ func TestEnqueueAll(t *testing.T) {
 	Queue = AS()
 
 	// success
-	EnqueueAll([]any{"a", "b"})
+	EnqueueAll(AS("a", "b"))
 	assert.Equal(t, AS("a", "b"), Queue)
 }
 
@@ -104,4 +107,55 @@ func TestSetRegister(t *testing.T) {
 	// failure - ErrRegisterNone
 	err = SetRegister(99, 255)
 	assert.Equal(t, ErrRegisterNone, err)
+}
+
+// 2.3: Testing Stack Functions
+////////////////////////////////
+
+func TestPop(t *testing.T) {
+	// setup
+	Stack = US(255)
+
+	// success
+	u, err := Pop()
+	assert.Equal(t, uint8(255), u)
+	assert.NoError(t, err)
+
+	// failure - ErrStackEmpty
+	u, err = Pop()
+	assert.Zero(t, u)
+	assert.Equal(t, ErrStackEmpty, err)
+}
+
+func TestPopN(t *testing.T) {
+	// setup
+	Stack = US(255, 255)
+
+	// success
+	us, err := PopN(2)
+	assert.Equal(t, US(255, 255), us)
+	assert.NoError(t, err)
+
+	// failure - ErrStackEmpty
+	us, err = PopN(1)
+	assert.Zero(t, us)
+	assert.Equal(t, ErrStackEmpty, err)
+}
+
+func TestPush(t *testing.T) {
+	// setup
+	Stack = US()
+
+	// success
+	Push(255)
+	assert.Equal(t, US(255), Stack)
+}
+
+func TestPushAll(t *testing.T) {
+	// setup
+	Stack = US()
+
+	// success
+	PushAll(US(255, 255))
+	assert.Equal(t, US(255, 255), Stack)
 }

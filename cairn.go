@@ -35,8 +35,11 @@ var Stack = make([]uint8, 0, 65536)
 // 1.2: Error Definitions
 //////////////////////////
 
-// ErrQueueEmpty is the error for dequeuing the empty Queue.
+// ErrQueueEmpty is the error for dequeuing an empty Queue.
 var ErrQueueEmpty = errors.New("queue is empty")
+
+// ErrStackEmpty is the error for popping an empty Stack.
+var ErrStackEmpty = errors.New("stack is empty")
 
 // ErrRegisterNone is the error for accessing a non-existent register.
 var ErrRegisterNone = errors.New("register does not exist")
@@ -119,4 +122,43 @@ func SetRegister(i, u uint8) error {
 
 	Registers[int(i)] = u
 	return nil
+}
+
+// 2.3: Stack Functions
+////////////////////////
+
+// Pop removes and returns the top item on the Stack.
+func Pop() (uint8, error) {
+	if len(Stack) == 0 {
+		return 0, ErrStackEmpty
+	}
+
+	u := Stack[len(Stack)-1]
+	Stack = Stack[:len(Stack)-1]
+	return u, nil
+}
+
+// PopN removes and returns the top N items on the Stack.
+func PopN(i int) ([]uint8, error) {
+	var us []uint8
+	for len(us) < i {
+		u, err := Pop()
+		if err != nil {
+			return nil, err
+		}
+
+		us = append(us, u)
+	}
+
+	return us, nil
+}
+
+// Push appends an integer to the top of the Stack.
+func Push(u uint8) {
+	Stack = append(Stack, u)
+}
+
+// PushAll appends an integer slice to the top of the Stack.
+func PushAll(us []uint8) {
+	Stack = append(Stack, us...)
 }
