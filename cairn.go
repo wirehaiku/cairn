@@ -59,6 +59,12 @@ var ErrStreamFail = errors.New("I/O failed")
 // ErrSymbolNone is the error for accessing a non-existent symbol
 var ErrSymbolNone = errors.New("symbol does not exist")
 
+// ErrInvalidSymbol is the error for using an atom other than an integer.
+var ErrInvalidSymbol = errors.New("invalid symbol")
+
+// ErrInvalidInteger is the error for using an atom other than a symbol.
+var ErrInvalidInteger = errors.New("invalid integer")
+
 // 1.3: System Variables
 /////////////////////////
 
@@ -577,12 +583,95 @@ func DIE() error {
 //////////////////////////////
 
 // IFT (a → _) evaluates code if a is true.
+func IFT() error {
+	u, err := Pop()
+	if err != nil {
+		return nil
+	}
+
+	as, err := DequeueTo("END")
+	if err != nil {
+		return nil
+	}
+
+	if u != 0 {
+		return EvaluateAll(as)
+	}
+
+	return nil
+}
 
 // IFF (a → _) evaluates code if a is false.
+func IFF() error {
+	u, err := Pop()
+	if err != nil {
+		return nil
+	}
+
+	as, err := DequeueTo("END")
+	if err != nil {
+		return nil
+	}
+
+	if u == 0 {
+		return EvaluateAll(as)
+	}
+
+	return nil
+}
 
 // FOR (_ → _) evaluates code until register a is false.
+func FOR() error {
+	a, err := Dequeue()
+	if err != nil {
+		return nil
+	}
+
+	as, err := DequeueTo("END")
+	if err != nil {
+		return nil
+	}
+
+	switch a := a.(type) {
+	case uint8:
+		for {
+			if err := EvaluateAll(as); err != nil {
+				return err
+			}
+
+			if Registers[a] == uint8(0) {
+				break
+			}
+		}
+
+		return nil
+
+	default:
+		return ErrInvalidInteger
+	}
+}
 
 // DEF (_ → _) sets a symbol to a named function.
+func DEF() error {
+	a, err := Dequeue()
+	if err != nil {
+		return nil
+	}
+
+	switch a := a.(type) {
+	case string:
+		as, err := DequeueTo("END")
+		if err != nil {
+			return nil
+		}
+
+		Functions[a] = as
+		return nil
+
+	default:
+		return ErrInvalidSymbol
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //                               Part 6: Main Functions                              //
@@ -596,7 +685,7 @@ func dump() string {
 	var ss []string
 
 	for i, u := range Registers {
-		if u > 0 {
+		if u != 0 {
 			ss = append(ss, fmt.Sprintf("R%d=%d", i, u))
 		}
 	}

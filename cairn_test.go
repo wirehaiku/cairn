@@ -674,6 +674,89 @@ func TestDIE(t *testing.T) {
 // 5.6: Testing Flow Control Commands
 //////////////////////////////////////
 
+func TestIFT(t *testing.T) {
+	// setup
+	Stack = US(1)
+	Queue = AS(uint8(123), "END")
+
+	// success - true
+	err := IFT()
+	assert.Equal(t, US(123), Stack)
+	assert.Empty(t, Queue)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(0)
+	Queue = AS(uint8(123), "END")
+
+	// success - false
+	err = IFT()
+	assert.Empty(t, Stack)
+	assert.Empty(t, Queue)
+	assert.NoError(t, err)
+}
+
+func TestIFF(t *testing.T) {
+	// setup
+	Stack = US(0)
+	Queue = AS(uint8(123), "END")
+
+	// success - true
+	err := IFF()
+	assert.Equal(t, US(123), Stack)
+	assert.Empty(t, Queue)
+	assert.NoError(t, err)
+
+	// setup
+	Stack = US(1)
+	Queue = AS(uint8(123), "END")
+
+	// success - false
+	err = IFF()
+	assert.Empty(t, Stack)
+	assert.Empty(t, Queue)
+	assert.NoError(t, err)
+}
+
+func TestFOR(t *testing.T) {
+	// setup
+	Stack = US()
+	Queue = AS(uint8(0), uint8(123), "END")
+	Registers = [8]uint8{0}
+
+	// success
+	err := FOR()
+	assert.Equal(t, US(123), Stack)
+	assert.Empty(t, Queue)
+	assert.NoError(t, err)
+
+	// setup
+	Queue = AS("NOPE", uint8(123), "END")
+
+	// failure - ErrInvalidInteger
+	err = FOR()
+	assert.Equal(t, ErrInvalidInteger, err)
+}
+
+func TestDEF(t *testing.T) {
+	// setup
+	Queue = AS("FUN", uint8(123), "END")
+	Functions = make(map[string][]any)
+
+	// success
+	err := DEF()
+	assert.Equal(t, AS(uint8(123)), Functions["FUN"])
+	assert.Empty(t, Queue)
+	assert.NoError(t, err)
+
+	// setup
+	Queue = AS(uint8(0), uint8(123), "END")
+
+	// failure - ErrInvalidSymbol
+	err = DEF()
+	assert.Equal(t, ErrInvalidSymbol, err)
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 //                          Part 6: Testing Main Functions                           //
 ///////////////////////////////////////////////////////////////////////////////////////
