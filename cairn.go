@@ -41,9 +41,6 @@ var Stack = make([]uint8, 0, 65536)
 // 1.2: System Variables
 /////////////////////////
 
-// Debug is a boolean indicating if the main loop should print debug information.
-var Debug = false
-
 // ExitFunc is the function used to exit the program.
 var ExitFunc = os.Exit
 
@@ -317,15 +314,13 @@ func Output(u uint8) error {
 // Flags is a container for parsed command-line flags.
 type Flags struct {
 	Command string
-	Debug   bool
 }
 
 // ParseFlags returns a parsed Flags from an argument slice.
 func ParseFlags(ss []string) (*Flags, error) {
 	fs := flag.NewFlagSet("cairn", flag.ContinueOnError)
 	fc := fs.String("c", "", "eval single string")
-	fd := fs.Bool("d", false, "enable debug mode")
-	return &Flags{*fc, *fd}, fs.Parse(ss)
+	return &Flags{*fc}, fs.Parse(ss)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -755,8 +750,6 @@ func main() {
 		print(err.Error())
 		ExitFunc(1)
 	}
-
-	Debug = fs.Debug
 
 	switch {
 	case fs.Command != "":

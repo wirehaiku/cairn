@@ -310,12 +310,11 @@ func TestOutput(t *testing.T) {
 
 func TestParseFlags(t *testing.T) {
 	// setup
-	ss := []string{"-c", "cmd", "-d"}
+	ss := []string{"-c", "cmd"}
 
 	// success
 	fs, err := ParseFlags(ss)
 	assert.Equal(t, "cmd", fs.Command)
-	assert.Equal(t, true, fs.Debug)
 	assert.NoError(t, err)
 }
 
