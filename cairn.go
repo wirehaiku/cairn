@@ -254,19 +254,24 @@ func EvaluateAll(as []any) error {
 	return nil
 }
 
-// 3.3: Standard Library Functions
-///////////////////////////////////
+// Run tokenises, atomises and evaluates a program string.
+func Run(s string) error {
+	ss := Tokenise(Clean(s))
+	as := AtomiseAll(ss)
+	EnqueueAll(as)
 
-// Import evaluates the contents of a file.
-func Import(p string) error {
-	bs, err := os.ReadFile(p)
-	if err != nil {
-		return fmt.Errorf("cannot read file %q", p)
+	for len(Queue) > 0 {
+		a, err := Dequeue()
+		if err != nil {
+			return err
+		}
+
+		if err := Evaluate(a); err != nil {
+			return err
+		}
 	}
 
-	ss := Tokenise(Clean(string(bs)))
-	as := AtomiseAll(ss)
-	return EvaluateAll(as)
+	return nil
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -374,17 +379,6 @@ func GTE() error {
 	}
 
 	Push(Bool(us[1] >= us[0]))
-	return nil
-}
-
-// LTE (a b → c) returns a <= b.
-func LTE() error {
-	us, err := PopN(2)
-	if err != nil {
-		return err
-	}
-
-	Push(Bool(us[1] <= us[0]))
 	return nil
 }
 
@@ -723,37 +717,17 @@ func prompt(s string) string {
 	return s
 }
 
-// once evaluates a program string once.
-func once(s string) error {
-	ss := Tokenise(Clean(s))
-	as := AtomiseAll(ss)
-	EnqueueAll(as)
-
-	for len(Queue) > 0 {
-		a, err := Dequeue()
-		if err != nil {
-			return err
-		}
-
-		if err := Evaluate(a); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 // 6.2: Main Boot Functions
 ////////////////////////////
 
 // init initialises the main Cairn program.
 func init() {
 	Commands = map[string]func() error{
-		"ADD": ADD, "SUB": SUB, "MOD": MOD, "GTE": GTE, "LTE": LTE,
+		"ADD": ADD, "SUB": SUB, "MOD": MOD, "GTE": GTE,
 		"CLR": CLR, "DUP": DUP, "DRP": DRP, "SWP": SWP, "GET": GET, "SET": SET,
 		"EQU": EQU, "NEQ": NEQ, "AND": AND, "ORR": ORR, "XOR": XOR, "NOT": NOT,
 		"INN": INN, "OUT": OUT, "BYE": BYE, "DIE": DIE,
-		"IFT": IFT, "IFF": IFF, "FOR": FOR, "DEF": DEF,
+		"IFT": IFT, "IFF": IFF, "FOR": FOR, "DEF": DEF, "TST": TST,
 	}
 }
 
@@ -767,20 +741,20 @@ func main() {
 
 	switch {
 	case fs.Command != "":
-		if err := once(Library + fs.Command); err != nil {
+		if err := Run(Library + fs.Command); err != nil {
 			print("Error: %s.\n", err.Error())
 		}
 
 	default:
 		print("Cairn version %s (%s).\n", VersionNums, VersionDate)
-		if err := once(Library); err != nil {
+		if err := Run(Library); err != nil {
 			print("Error: %s.\n", err.Error())
 			ExitFunc(1)
 		}
 
 		for {
 			s := prompt(">>> ")
-			if err := once(s); err != nil {
+			if err := Run(s); err != nil {
 				print("Error: %s.\n\n", err.Error())
 
 			} else {

@@ -1,51 +1,29 @@
-///////////////////////////////////////////////////////////////////////////////////////
-//                               Cairn Standard Library                              //
-///////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////
+// Cairn Standard Library //
+////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////////////
-//                            Part 1: Aliases & Shortcuts                            //
-///////////////////////////////////////////////////////////////////////////////////////
+// Part 1: Library Helpers
+////////////////////////////
 
-// 1.1: Library Aliases
-////////////////////////
+// 1.1: No-Ops
 
-// Definition separators.
-DEF · END
+DEF · // No-op, used as code separator.
+END
 
-// 1.2: Register Shortcuts
-///////////////////////////
+// Part 2: Derived Functions
+/////////////////////////////
 
-// Get register N.
-DEF R0 0 GET END · DEF R1 1 GET END
-DEF R2 2 GET END · DEF R3 3 GET END
-DEF R4 4 GET END · DEF R5 5 GET END
-DEF R6 6 GET END · DEF R7 7 GET END
+// 2.1: Math Functions
 
-// Set register N.
-DEF R0= 0 SET END · DEF R1= 1 SET END
-DEF R2= 2 SET END · DEF R3= 3 SET END
-DEF R4= 4 SET END · DEF R5= 5 SET END
-DEF R6= 6 SET END · DEF R7= 7 SET END
+DEF LT // Return true if a < b.
+    GTE NOT
+END
 
-// Increment register N.
-DEF R0+ 0 GET 1 ADD 0 SET END · DEF R1+ 1 GET 1 ADD 1 SET END
-DEF R2+ 2 GET 1 ADD 2 SET END · DEF R3+ 3 GET 1 ADD 3 SET END
-DEF R4+ 4 GET 1 ADD 4 SET END · DEF R5+ 5 GET 1 ADD 5 SET END
-DEF R6+ 6 GET 1 ADD 6 SET END · DEF R7+ 7 GET 1 ADD 7 SET END
+DEF LTE // Return true if a <= b.
+    0 SET 1 SET · 1 GET 0 GET
+    LT · 0 GET 1 GET EQU · ORR
+END
 
-// Decrement register N.
-DEF R0- 0 GET 1 SUB 0 SET END · DEF R1- 1 GET 1 SUB 1 SET END
-DEF R2- 2 GET 1 SUB 2 SET END · DEF R3- 3 GET 1 SUB 3 SET END
-DEF R4- 4 GET 1 SUB 4 SET END · DEF R5- 5 GET 1 SUB 5 SET END
-DEF R6- 6 GET 1 SUB 6 SET END · DEF R7- 7 GET 1 SUB 7 SET END
-
-// 1.3: Command Aliases
-////////////////////////
-
-// Aliases for integer functions.
-DEF +  ADD END · DEF -  SUB END · DEF % MOD END
-DEF >= GTE END · DEF <= LTE END
-
-// Aliases for logic functions.
-DEF == EQU END · DEF != NEQ END · DEF & AND END
-DEF |  ORR END · DEF ^  XOR END · DEF ! NOT END
+DEF GT // Return true if a > b.
+    LTE NOT
+END

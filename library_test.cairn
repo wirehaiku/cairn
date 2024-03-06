@@ -1,0 +1,24 @@
+//////////////////////////////////
+// Cairn Standard Library Tests //
+//////////////////////////////////
+
+// Part 1: Library Helpers
+////////////////////////////
+
+// 1.1: No-Ops
+
+·
+
+// Part 2: Derived Functions
+/////////////////////////////
+
+// 2.1: Math Functions
+
+2 3 LT · 1 EQU · TST 2 < 3 SHOULD BE 1 END
+3 3 LT · 0 EQU · TST 3 < 3 SHOULD BE 0 END
+
+2 3 LTE · 1 EQU · TST 2 <= 3 SHOULD BE 1 END
+3 3 LTE · 1 EQU · TST 3 <= 3 SHOULD BE 1 END
+
+3 2 GT · 1 EQU · TST 3 > 2 SHOULD BE 1 END
+3 3 GT · 0 EQU · TST 3 > 3 SHOULD BE 0 END

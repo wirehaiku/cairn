@@ -7,8 +7,7 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"os"
-	"path/filepath"
+	_ "embed"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -272,24 +271,17 @@ func TestEvaluateAll(t *testing.T) {
 	EqualError(t, err, `cannot evaluate atom type "bool"`)
 }
 
-// 3.3: Testing Standard Library Functions
-///////////////////////////////////////////
-
-func TestImport(t *testing.T) {
+func TestRun(t *testing.T) {
 	// setup
+	Commands["ADD"] = ADD
+	Queue = AS()
 	Stack = US()
-	d := t.TempDir()
-	p := filepath.Join(d, "test-import.cairn")
-	os.WriteFile(p, []byte("1 2 3"), 0666)
 
 	// success
-	err := Import(p)
-	assert.Equal(t, US(1, 2, 3), Stack)
+	err := Run("1 2 ADD")
+	assert.Empty(t, Queue)
+	assert.Equal(t, US(3), Stack)
 	assert.NoError(t, err)
-
-	// failure - cannot read
-	err = Import("/nope")
-	EqualError(t, err, `cannot read file "/nope"`)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -396,24 +388,6 @@ func TestGTE(t *testing.T) {
 
 	// success - false
 	err = GTE()
-	assert.Equal(t, US(0), Stack)
-	assert.NoError(t, err)
-}
-
-func TestLTE(t *testing.T) {
-	// setup
-	Stack = US(2, 3)
-
-	// success - true
-	err := LTE()
-	assert.Equal(t, US(1), Stack)
-	assert.NoError(t, err)
-
-	// setup
-	Stack = US(3, 2)
-
-	// success - false
-	err = LTE()
 	assert.Equal(t, US(0), Stack)
 	assert.NoError(t, err)
 }
@@ -841,19 +815,6 @@ func TestPrompt(t *testing.T) {
 	assert.Equal(t, "test\n", s)
 }
 
-func TestOnce(t *testing.T) {
-	// setup
-	Commands["ADD"] = ADD
-	Queue = AS()
-	Stack = US()
-
-	// success
-	err := once("1 2 ADD")
-	assert.Empty(t, Queue)
-	assert.Equal(t, US(3), Stack)
-	assert.NoError(t, err)
-}
-
 // 6.2: Testing Main Boot Functions
 ////////////////////////////////////
 
@@ -864,4 +825,23 @@ func TestInit(t *testing.T) {
 
 func TestMain(t *testing.T) {
 	// cannot test main function
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+//                         Part 6: Testing Standard Library                          //
+///////////////////////////////////////////////////////////////////////////////////////
+
+//go:embed library_test.cairn
+var LibraryTest string
+
+func TestLibrary(t *testing.T) {
+	// setup
+	b := Bufs("")
+	Queue = AS()
+	Stack = US()
+
+	// success
+	err := Run(Library + LibraryTest)
+	assert.Empty(t, b.String())
+	assert.NoError(t, err)
 }

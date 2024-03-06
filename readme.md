@@ -51,7 +51,6 @@ Name  | Form      | Description
 `SUB` | `a b → c` | Return `a` - `b`.
 `MOD` | `a b → c` | Return `a` % `b`.
 `GTE` | `a b → c` | Return `a` >= `b`.
-`LTE` | `a b → c` | Return `a` <= `b`.
 
 ### Memory Commands
 
