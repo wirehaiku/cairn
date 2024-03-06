@@ -744,7 +744,7 @@ func init() {
 		"CLR": CLR, "DUP": DUP, "DRP": DRP, "SWP": SWP, "GET": GET, "SET": SET,
 		"EQU": EQU, "NEQ": NEQ, "AND": AND, "ORR": ORR, "XOR": XOR, "NOT": NOT,
 		"INN": INN, "OUT": OUT, "BYE": BYE, "DIE": DIE,
-		// "IFT": IFT, "IFF": IFF, "FOR": FOR, "DEF": DEF,
+		"IFT": IFT, "IFF": IFF, "FOR": FOR, "DEF": DEF,
 	}
 }
 
