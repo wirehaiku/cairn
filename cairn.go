@@ -433,12 +433,12 @@ func SWP() error {
 func GET() error {
 	u, err := Pop()
 	if err != nil {
-		return nil
+		return err
 	}
 
 	u, err = GetRegister(u)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	Push(u)
@@ -449,7 +449,7 @@ func GET() error {
 func SET() error {
 	us, err := PopN(2)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	return SetRegister(us[0], us[1])
@@ -462,7 +462,7 @@ func SET() error {
 func EQU() error {
 	us, err := PopN(2)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	Push(Bool(us[0] == us[1]))
@@ -473,7 +473,7 @@ func EQU() error {
 func NEQ() error {
 	us, err := PopN(2)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	Push(Bool(us[0] != us[1]))
@@ -484,7 +484,7 @@ func NEQ() error {
 func AND() error {
 	us, err := PopN(2)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	Push(Bool(us[0] != 0 && us[1] != 0))
@@ -495,7 +495,7 @@ func AND() error {
 func ORR() error {
 	us, err := PopN(2)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	Push(Bool(us[0] != 0 || us[1] != 0))
@@ -506,7 +506,7 @@ func ORR() error {
 func XOR() error {
 	us, err := PopN(2)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	Push(Bool(us[0] != 0 && us[1] == 0 || us[0] == 0 && us[1] != 0))
@@ -517,7 +517,7 @@ func XOR() error {
 func NOT() error {
 	u, err := Pop()
 	if err != nil {
-		return nil
+		return err
 	}
 
 	Push(Bool(u == 0))
@@ -572,12 +572,12 @@ func DIE() error {
 func IFT() error {
 	u, err := Pop()
 	if err != nil {
-		return nil
+		return err
 	}
 
 	as, err := DequeueTo("END")
 	if err != nil {
-		return nil
+		return err
 	}
 
 	if u != 0 {
@@ -591,12 +591,12 @@ func IFT() error {
 func IFF() error {
 	u, err := Pop()
 	if err != nil {
-		return nil
+		return err
 	}
 
 	as, err := DequeueTo("END")
 	if err != nil {
-		return nil
+		return err
 	}
 
 	if u == 0 {
@@ -610,12 +610,12 @@ func IFF() error {
 func FOR() error {
 	a, err := Dequeue()
 	if err != nil {
-		return nil
+		return err
 	}
 
 	as, err := DequeueTo("END")
 	if err != nil {
-		return nil
+		return err
 	}
 
 	switch a := a.(type) {
@@ -641,14 +641,14 @@ func FOR() error {
 func DEF() error {
 	a, err := Dequeue()
 	if err != nil {
-		return nil
+		return err
 	}
 
 	switch a := a.(type) {
 	case string:
 		as, err := DequeueTo("END")
 		if err != nil {
-			return nil
+			return err
 		}
 
 		Functions[a] = as
@@ -657,6 +657,32 @@ func DEF() error {
 	default:
 		return fmt.Errorf(`"%v" is not a symbol`, a)
 	}
+}
+
+// TST (a → _) prints a error message if a is false.
+func TST() error {
+	u, err := Pop()
+	if err != nil {
+		return err
+	}
+
+	as, err := DequeueTo("END")
+	if err != nil {
+		return err
+	}
+
+	if u == 0 {
+		var ss []string
+		for _, a := range as {
+			ss = append(ss, fmt.Sprintf("%v", a))
+		}
+
+		s := strings.Join(ss, " ")
+		fmt.Fprintf(Stdout, "ASSERT: %s.\n", s)
+		Stdout.Flush()
+	}
+
+	return nil
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

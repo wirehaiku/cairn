@@ -104,6 +104,10 @@ Evaluate `[CODE]` in a continuous loop until register `[R]` is false.
 
 Set `[SYMBOL]` to the user-defined function `[CODE]`.
 
+#### `TST [CODE] END` · `a → _`
+
+Print an error message containing `[CODE]` if `a` is false.
+
 ## Contributing
 
 Please add all bug reports and feature requests to the [issue tracker][is], thank you.

@@ -770,6 +770,32 @@ func TestDEF(t *testing.T) {
 	EqualError(t, err, `"0" is not a symbol`)
 }
 
+func TestTST(t *testing.T) {
+	// setup
+	b := Bufs("")
+	Stack = US(0)
+	Queue = AS("TEST", "END")
+
+	// success - error printed
+	err := TST()
+	assert.Equal(t, "ASSERT: TEST.\n", b.String())
+	assert.Empty(t, Queue)
+	assert.Empty(t, Stack)
+	assert.NoError(t, err)
+
+	// setup
+	b = Bufs("")
+	Stack = US(1)
+	Queue = AS("TEST", "END")
+
+	// success - error not printed
+	err = TST()
+	assert.Empty(t, b.String())
+	assert.Empty(t, Queue)
+	assert.Empty(t, Stack)
+	assert.NoError(t, err)
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 //                          Part 6: Testing Main Functions                           //
 ///////////////////////////////////////////////////////////////////////////////////////
