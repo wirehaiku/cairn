@@ -327,7 +327,7 @@ type Flags struct {
 // ParseFlags returns a parsed Flags from an argument slice.
 func ParseFlags(ss []string) (*Flags, error) {
 	fs := flag.NewFlagSet("cairn", flag.ContinueOnError)
-	fc := fs.String("c", "", "execute single string")
+	fc := fs.String("c", "", "eval single string")
 	fd := fs.Bool("d", false, "enable debug mode")
 	return &Flags{*fc, *fd}, fs.Parse(ss)
 }
@@ -620,18 +620,18 @@ func once(s string) error {
 	ss := Tokenise(Clean(s))
 	as, err := AtomiseAll(ss)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	EnqueueAll(as)
 	for len(Queue) > 0 {
 		a, err := Dequeue()
 		if err != nil {
-			return nil
+			return err
 		}
 
 		if err := Evaluate(a); err != nil {
-			return nil
+			return err
 		}
 	}
 
@@ -647,7 +647,7 @@ func init() {
 		"ADD": ADD, "SUB": SUB, "MOD": MOD, "GTE": GTE, "LTE": LTE,
 		"CLR": CLR, "DUP": DUP, "DRP": DRP, "SWP": SWP, "GET": GET, "SET": SET,
 		"EQU": EQU, "NEQ": NEQ, "AND": AND, "ORR": ORR, "XOR": XOR, "NOT": NOT,
-		"INN": INN, "OUT": OUT,
+		"INN": INN, "OUT": OUT, "BYE": BYE, "DIE": DIE,
 		// "IFT": IFT, "IFF": IFF, "FOR": FOR, "DEF": DEF,
 	}
 }
@@ -658,7 +658,7 @@ func main() {
 	fs, err := ParseFlags(os.Args[1:])
 	if err != nil {
 		print(err.Error())
-		os.Exit(1)
+		ExitFunc(1)
 	}
 
 	// Set environment according to flags.
@@ -677,7 +677,7 @@ func main() {
 		for {
 			s := prompt(">>> ")
 			if err := once(s); err != nil {
-				print("Error: %s.\n", err.Error())
+				print("Error: %s.\n\n", err.Error())
 
 			} else if len(Stack) > 0 {
 				print("[ %s ]\n", Dump())
