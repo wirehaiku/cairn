@@ -65,6 +65,9 @@ var ErrSymbolNone = errors.New("symbol does not exist")
 // Debug is a boolean indicating if the main loop should print debug information.
 var Debug = false
 
+// ExitFunc is the function used to exit the program.
+var ExitFunc = os.Exit
+
 // Stdin is the default input Reader.
 var Stdin = bufio.NewReader(os.Stdin)
 
@@ -553,7 +556,7 @@ func INN() error {
 	return nil
 }
 
-// OUT (a → _) writes `a` as an ASCII character to output.
+// OUT (a → _) writes a as an ASCII character to output.
 func OUT() error {
 	u, err := Pop()
 	if err != nil {
@@ -563,9 +566,22 @@ func OUT() error {
 	return Output(u)
 }
 
-// BYE (`_ → _`) exits the program successfully.
+// BYE (_ → _) exits the program successfully.
+func BYE() error {
+	ExitFunc(0)
+	return nil
+}
 
-// DIE (`a → _`) exits the program with error code `a`.
+// DIE (a → _) exits the program with error code a.
+func DIE() error {
+	u, err := Pop()
+	if err != nil {
+		return err
+	}
+
+	ExitFunc(int(u))
+	return nil
+}
 
 // 5.6: Flow Control Commands
 //////////////////////////////

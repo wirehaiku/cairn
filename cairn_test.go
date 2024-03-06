@@ -7,6 +7,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -657,6 +658,29 @@ func TestOUT(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestBYE(t *testing.T) {
+	// setup
+	var x int
+	ExitFunc = func(i int) { x = i }
+
+	// success
+	err := BYE()
+	assert.Equal(t, 0, x)
+	assert.NoError(t, err)
+}
+
+func TestDIE(t *testing.T) {
+	// setup
+	var x int
+	Stack = US(123)
+	ExitFunc = func(i int) { x = i }
+
+	// success
+	err := DIE()
+	assert.Equal(t, 123, x)
+	assert.NoError(t, err)
+}
+
 // 5.6: Testing Flow Control Commands
 //////////////////////////////////////
 
@@ -697,4 +721,30 @@ func TestOnce(t *testing.T) {
 	assert.Empty(t, Queue)
 	assert.Equal(t, US(3), Stack)
 	assert.NoError(t, err)
+}
+
+// 6.2: Testing Main Boot Functions
+////////////////////////////////////
+
+func TestInit(t *testing.T) {
+	// success
+	assert.NotZero(t, len(Commands))
+}
+
+func TestMain(t *testing.T) {
+	// setup
+	b := Bufs("")
+	os.Args = SS("cairn", "-c", "72 OUT 73 OUT")
+
+	// success - command string
+	main()
+	assert.Equal(t, "HI", b.String())
+
+	// setup
+	b = Bufs("1 2 ADD\nBYE\n")
+	os.Args = SS("cairn")
+
+	// success - REPL
+	main()
+	assert.Equal(t, ">>> [ 3 ]\n>>> ", b.String())
 }
