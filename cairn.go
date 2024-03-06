@@ -196,35 +196,22 @@ func Tokenise(s string) []string {
 /////////////////////////////
 
 // Atomise returns an atom from a token string.
-func Atomise(s string) (any, error) {
+func Atomise(s string) any {
 	if u, err := strconv.ParseUint(s, 10, 8); err == nil {
-		return uint8(u), nil
+		return uint8(u)
 	}
 
-	if c, ok := Commands[s]; ok {
-		return c, nil
-	}
-
-	if as, ok := Functions[s]; ok {
-		return as, nil
-	}
-
-	return nil, fmt.Errorf("symbol %q is not defined", s)
+	return s
 }
 
 // AtomiseAll returns an atom slice from a token slice.
-func AtomiseAll(ss []string) ([]any, error) {
+func AtomiseAll(ss []string) []any {
 	var as []any
 	for _, s := range ss {
-		a, err := Atomise(s)
-		if err != nil {
-			return nil, err
-		}
-
-		as = append(as, a)
+		as = append(as, Atomise(s))
 	}
 
-	return as, nil
+	return as
 }
 
 // Evaluate evaluates an atom.
@@ -233,6 +220,17 @@ func Evaluate(a any) error {
 	case uint8:
 		Push(a)
 		return nil
+
+	case string:
+		if c, ok := Commands[a]; ok {
+			return c()
+		}
+
+		if as, ok := Functions[a]; ok {
+			return EvaluateAll(as)
+		}
+
+		return fmt.Errorf("symbol %q is not defined", a)
 
 	case func() error:
 		return a()
@@ -267,11 +265,7 @@ func Import(p string) error {
 	}
 
 	ss := Tokenise(Clean(string(bs)))
-	as, err := AtomiseAll(ss)
-	if err != nil {
-		return err
-	}
-
+	as := AtomiseAll(ss)
 	return EvaluateAll(as)
 }
 
@@ -706,12 +700,9 @@ func prompt(s string) string {
 // once evaluates a program string once.
 func once(s string) error {
 	ss := Tokenise(Clean(s))
-	as, err := AtomiseAll(ss)
-	if err != nil {
-		return err
-	}
-
+	as := AtomiseAll(ss)
 	EnqueueAll(as)
+
 	for len(Queue) > 0 {
 		a, err := Dequeue()
 		if err != nil {

@@ -210,31 +210,18 @@ func TestAtomise(t *testing.T) {
 	Functions["FUN"] = []any{"A"}
 
 	// success - uint8
-	a, err := Atomise("1")
+	a := Atomise("1")
 	assert.Equal(t, uint8(1), a)
-	assert.NoError(t, err)
 
-	// success - command
-	a, err = Atomise("CMD")
-	assert.NotNil(t, a)
-	assert.NoError(t, err)
-
-	// success - function
-	a, err = Atomise("FUN")
-	assert.Equal(t, AS("A"), a)
-	assert.NoError(t, err)
-
-	// failure - ErrSymbolNone
-	a, err = Atomise("nope")
-	assert.Nil(t, a)
-	EqualError(t, err, `symbol "nope" is not defined`)
+	// success - string
+	a = Atomise("STR")
+	assert.Equal(t, "STR", a)
 }
 
 func TestAtomiseAll(t *testing.T) {
 	// success
-	as, err := AtomiseAll(SS("1", "2", "3"))
+	as := AtomiseAll(SS("1", "2", "3"))
 	assert.Equal(t, AS(uint8(1), uint8(2), uint8(3)), as)
-	assert.NoError(t, err)
 }
 
 func TestEvaluate(t *testing.T) {
