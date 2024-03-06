@@ -9,7 +9,6 @@ package main
 import (
 	"bufio"
 	_ "embed"
-	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -62,33 +61,6 @@ var VersionDate = "2024-03-05"
 // VersionNums is the SemVer number of the current Cairn version.
 var VersionNums = "0.0.0"
 
-// 1.3: Error Definitions
-//////////////////////////
-
-// ErrAtomUndefined is the error for evaluating undefined atoms.
-var ErrAtomUndefined = errors.New("atom type is not defined")
-
-// ErrQueueEmpty is the error for dequeuing an empty Queue.
-var ErrQueueEmpty = errors.New("queue is empty")
-
-// ErrStackEmpty is the error for popping an empty Stack.
-var ErrStackEmpty = errors.New("stack is empty")
-
-// ErrRegisterNone is the error for accessing a non-existent register.
-var ErrRegisterNone = errors.New("register does not exist")
-
-// ErrStreamFail is the error for failed I/O operations.
-var ErrStreamFail = errors.New("I/O failed")
-
-// ErrSymbolNone is the error for accessing a non-existent symbol
-var ErrSymbolNone = errors.New("symbol does not exist")
-
-// ErrInvalidSymbol is the error for using an atom other than an integer.
-var ErrInvalidSymbol = errors.New("invalid symbol")
-
-// ErrInvalidInteger is the error for using an atom other than a symbol.
-var ErrInvalidInteger = errors.New("invalid integer")
-
 ///////////////////////////////////////////////////////////////////////////////////////
 //                            Part 2: Collection Functions                           //
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +71,7 @@ var ErrInvalidInteger = errors.New("invalid integer")
 // Dequeue removes and returns the first atom in the Queue.
 func Dequeue() (any, error) {
 	if len(Queue) == 0 {
-		return nil, ErrQueueEmpty
+		return nil, fmt.Errorf("queue is empty")
 	}
 
 	a := Queue[0]
@@ -141,7 +113,7 @@ func EnqueueAll(as []any) {
 // GetRegister returns the value of a given register.
 func GetRegister(i uint8) (uint8, error) {
 	if i > 7 {
-		return 0, ErrRegisterNone
+		return 0, fmt.Errorf("register %d does not exist", i)
 	}
 
 	return Registers[int(i)], nil
@@ -150,7 +122,7 @@ func GetRegister(i uint8) (uint8, error) {
 // SetRegister sets the value of a given register.
 func SetRegister(i, u uint8) error {
 	if i > 7 {
-		return ErrRegisterNone
+		return fmt.Errorf("register %d does not exist", i)
 	}
 
 	Registers[int(i)] = u
@@ -163,7 +135,7 @@ func SetRegister(i, u uint8) error {
 // Pop removes and returns the top item on the Stack.
 func Pop() (uint8, error) {
 	if len(Stack) == 0 {
-		return 0, ErrStackEmpty
+		return 0, fmt.Errorf("stack is empty")
 	}
 
 	u := Stack[len(Stack)-1]
@@ -237,7 +209,7 @@ func Atomise(s string) (any, error) {
 		return as, nil
 	}
 
-	return nil, ErrSymbolNone
+	return nil, fmt.Errorf("symbol %q is not defined", s)
 }
 
 // AtomiseAll returns an atom slice from a token slice.
@@ -269,7 +241,7 @@ func Evaluate(a any) error {
 		return EvaluateAll(a)
 
 	default:
-		return ErrAtomUndefined
+		return fmt.Errorf(`cannot evaluate atom type "%T"`, a)
 	}
 }
 
@@ -291,7 +263,7 @@ func EvaluateAll(as []any) error {
 func Import(p string) error {
 	bs, err := os.ReadFile(p)
 	if err != nil {
-		return ErrStreamFail
+		return fmt.Errorf("cannot read file %q", p)
 	}
 
 	ss := Tokenise(Clean(string(bs)))
@@ -314,7 +286,7 @@ func Import(p string) error {
 func Input() (uint8, error) {
 	r, err := Stdin.ReadByte()
 	if err != nil {
-		return 0, ErrStreamFail
+		return 0, fmt.Errorf("cannot read STDIN")
 	}
 
 	return uint8(r), nil
@@ -323,11 +295,11 @@ func Input() (uint8, error) {
 // Output writes an integer as an ASCII character to Stdout.
 func Output(u uint8) error {
 	if err := Stdout.WriteByte(u); err != nil {
-		return ErrStreamFail
+		return fmt.Errorf("cannot write STDOUT")
 	}
 
 	if err := Stdout.Flush(); err != nil {
-		return ErrStreamFail
+		return fmt.Errorf("cannot write STDOUT")
 	}
 
 	return nil
@@ -667,7 +639,7 @@ func FOR() error {
 		return nil
 
 	default:
-		return ErrInvalidInteger
+		return fmt.Errorf(`"%v" is not an integer`, a)
 	}
 }
 
@@ -689,7 +661,7 @@ func DEF() error {
 		return nil
 
 	default:
-		return ErrInvalidSymbol
+		return fmt.Errorf(`"%v" is not a symbol`, a)
 	}
 }
 

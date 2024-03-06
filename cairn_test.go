@@ -37,6 +37,11 @@ func Bufs(s string) *bytes.Buffer {
 	return out
 }
 
+// EqualError asserts an error matches a regular expression.
+func EqualError(t *testing.T, err error, s string) {
+	assert.Regexp(t, s, err.Error())
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 //                        Part 2: Testing Collection Functions                       //
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +61,7 @@ func TestDequeue(t *testing.T) {
 	// failure - ErrQueueEmpty
 	a, err = Dequeue()
 	assert.Nil(t, a)
-	assert.Equal(t, ErrQueueEmpty, err)
+	EqualError(t, err, "queue is empty")
 }
 
 func TestDequeueTo(t *testing.T) {
@@ -73,7 +78,7 @@ func TestDequeueTo(t *testing.T) {
 	as, err = DequeueTo("END")
 	assert.Empty(t, as)
 	assert.Empty(t, Queue)
-	assert.Equal(t, ErrQueueEmpty, err)
+	EqualError(t, err, "queue is empty")
 }
 
 func TestEnqueue(t *testing.T) {
@@ -109,7 +114,7 @@ func TestGetRegister(t *testing.T) {
 	// failure - ErrRegisterNone
 	u, err = GetRegister(8)
 	assert.Zero(t, u)
-	assert.Equal(t, ErrRegisterNone, err)
+	EqualError(t, err, "register 8 does not exist")
 }
 
 func TestSetRegister(t *testing.T) {
@@ -123,7 +128,7 @@ func TestSetRegister(t *testing.T) {
 
 	// failure - ErrRegisterNone
 	err = SetRegister(8, 123)
-	assert.Equal(t, ErrRegisterNone, err)
+	EqualError(t, err, "register 8 does not exist")
 }
 
 // 2.3: Testing Stack Functions
@@ -141,7 +146,7 @@ func TestPop(t *testing.T) {
 	// failure - ErrStackEmpty
 	u, err = Pop()
 	assert.Zero(t, u)
-	assert.Equal(t, ErrStackEmpty, err)
+	EqualError(t, err, "stack is empty")
 }
 
 func TestPopN(t *testing.T) {
@@ -156,7 +161,7 @@ func TestPopN(t *testing.T) {
 	// failure - ErrStackEmpty
 	us, err = PopN(1)
 	assert.Zero(t, us)
-	assert.Equal(t, ErrStackEmpty, err)
+	EqualError(t, err, "stack is empty")
 }
 
 func TestPush(t *testing.T) {
@@ -222,7 +227,7 @@ func TestAtomise(t *testing.T) {
 	// failure - ErrSymbolNone
 	a, err = Atomise("nope")
 	assert.Nil(t, a)
-	assert.Equal(t, ErrSymbolNone, err)
+	EqualError(t, err, `symbol "nope" is not defined`)
 }
 
 func TestAtomiseAll(t *testing.T) {
@@ -263,7 +268,7 @@ func TestEvaluate(t *testing.T) {
 
 	// failure - ErrAtomUndefined
 	err = Evaluate(false)
-	assert.Equal(t, ErrAtomUndefined, err)
+	EqualError(t, err, `cannot evaluate atom type "bool"`)
 }
 
 func TestEvaluateAll(t *testing.T) {
@@ -277,7 +282,7 @@ func TestEvaluateAll(t *testing.T) {
 
 	// failure - ErrAtomUndefined
 	err = EvaluateAll(AS(false))
-	assert.Equal(t, ErrAtomUndefined, err)
+	EqualError(t, err, `cannot evaluate atom type "bool"`)
 }
 
 // 3.3: Testing Standard Library Functions
@@ -294,6 +299,10 @@ func TestImport(t *testing.T) {
 	err := Import(p)
 	assert.Equal(t, US(1, 2, 3), Stack)
 	assert.NoError(t, err)
+
+	// failure - cannot read
+	err = Import("/nope")
+	EqualError(t, err, `cannot read file "/nope"`)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -752,7 +761,7 @@ func TestFOR(t *testing.T) {
 
 	// failure - ErrInvalidInteger
 	err = FOR()
-	assert.Equal(t, ErrInvalidInteger, err)
+	EqualError(t, err, `"NOPE" is not an integer`)
 }
 
 func TestDEF(t *testing.T) {
@@ -771,7 +780,7 @@ func TestDEF(t *testing.T) {
 
 	// failure - ErrInvalidSymbol
 	err = DEF()
-	assert.Equal(t, ErrInvalidSymbol, err)
+	EqualError(t, err, `"0" is not a symbol`)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
