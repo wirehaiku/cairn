@@ -8,6 +8,7 @@ package main
 
 import (
 	"bufio"
+	_ "embed"
 	"errors"
 	"flag"
 	"fmt"
@@ -43,6 +44,11 @@ var Stack = make([]uint8, 0, 65536)
 
 // ExitFunc is the function used to exit the program.
 var ExitFunc = os.Exit
+
+// Library is the embedded standard library file.
+//
+//go:embed library.cairn
+var Library string
 
 // Stdin is the default input Reader.
 var Stdin = bufio.NewReader(os.Stdin)
@@ -276,6 +282,25 @@ func EvaluateAll(as []any) error {
 	}
 
 	return nil
+}
+
+// 3.3: Standard Library Functions
+///////////////////////////////////
+
+// Import evaluates the contents of a file.
+func Import(p string) error {
+	bs, err := os.ReadFile(p)
+	if err != nil {
+		return ErrStreamFail
+	}
+
+	ss := Tokenise(Clean(string(bs)))
+	as, err := AtomiseAll(ss)
+	if err != nil {
+		return err
+	}
+
+	return EvaluateAll(as)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -753,12 +778,16 @@ func main() {
 
 	switch {
 	case fs.Command != "":
-		if err := once(fs.Command); err != nil {
+		if err := once(Library + fs.Command); err != nil {
 			print("Error: %s.\n", err.Error())
 		}
 
 	default:
 		print("Cairn version %s (%s).\n", VersionNums, VersionDate)
+		if err := once(Library); err != nil {
+			print("Error: %s.\n", err.Error())
+			ExitFunc(1)
+		}
 
 		for {
 			s := prompt(">>> ")

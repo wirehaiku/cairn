@@ -7,6 +7,8 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -276,6 +278,22 @@ func TestEvaluateAll(t *testing.T) {
 	// failure - ErrAtomUndefined
 	err = EvaluateAll(AS(false))
 	assert.Equal(t, ErrAtomUndefined, err)
+}
+
+// 3.3: Testing Standard Library Functions
+///////////////////////////////////////////
+
+func TestImport(t *testing.T) {
+	// setup
+	Stack = US()
+	d := t.TempDir()
+	p := filepath.Join(d, "test-import.cairn")
+	os.WriteFile(p, []byte("1 2 3"), 0666)
+
+	// success
+	err := Import(p)
+	assert.Equal(t, US(1, 2, 3), Stack)
+	assert.NoError(t, err)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
