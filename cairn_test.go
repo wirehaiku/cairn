@@ -97,7 +97,7 @@ func TestEnqueueAll(t *testing.T) {
 
 func TestGetRegister(t *testing.T) {
 	// setup
-	Registers[0] = 123
+	Registers = [8]uint8{123}
 
 	// success
 	u, err := GetRegister(0)
@@ -112,7 +112,7 @@ func TestGetRegister(t *testing.T) {
 
 func TestSetRegister(t *testing.T) {
 	// setup
-	Registers[0] = 0
+	Registers = [8]uint8{}
 
 	// success
 	err := SetRegister(0, 123)
@@ -126,15 +126,6 @@ func TestSetRegister(t *testing.T) {
 
 // 2.3: Testing Stack Functions
 ////////////////////////////////
-
-func TestDump(t *testing.T) {
-	// setup
-	Stack = US(1, 2, 3)
-
-	// success
-	s := Dump()
-	assert.Equal(t, "1 2 3", s)
-}
 
 func TestPop(t *testing.T) {
 	// setup
@@ -459,7 +450,7 @@ func TestSWP(t *testing.T) {
 
 func TestGET(t *testing.T) {
 	// setup
-	Registers[0] = 123
+	Registers = [8]uint8{123}
 	Stack = US(0)
 
 	// success
@@ -470,7 +461,7 @@ func TestGET(t *testing.T) {
 
 func TestSET(t *testing.T) {
 	// setup
-	Registers[0] = 0
+	Registers = [8]uint8{}
 	Stack = US(123, 0)
 
 	// success
@@ -689,6 +680,25 @@ func TestDIE(t *testing.T) {
 
 // 6.1: Testing Main Helper Functions
 //////////////////////////////////////
+
+func TestDump(t *testing.T) {
+	// setup
+	Stack = US(1, 2, 3)
+	Registers = [8]uint8{}
+
+	// success - stack only
+	s := dump()
+	assert.Equal(t, "[1 2 3]", s)
+
+	// setup
+	Registers[0] = 1
+	Registers[1] = 2
+	Registers[2] = 3
+
+	// success - stack and registers
+	s = dump()
+	assert.Equal(t, "[1 2 3] R0=1 R1=2 R2=3", s)
+}
 
 func TestPrint(t *testing.T) {
 	// setup

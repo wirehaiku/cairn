@@ -151,16 +151,6 @@ func SetRegister(i, u uint8) error {
 // 2.3: Stack Functions
 ////////////////////////
 
-// Dump returns the Stack's contents as a string.
-func Dump() string {
-	var ss []string
-	for _, u := range Stack {
-		ss = append(ss, strconv.FormatUint(uint64(u), 10))
-	}
-
-	return strings.Join(ss, " ")
-}
-
 // Pop removes and returns the top item on the Stack.
 func Pop() (uint8, error) {
 	if len(Stack) == 0 {
@@ -601,6 +591,23 @@ func DIE() error {
 // 6.1: Main Helper Functions
 //////////////////////////////
 
+// dump returns the Stack's and Registers's contents as a string.
+func dump() string {
+	var ss []string
+
+	for i, u := range Registers {
+		if u > 0 {
+			ss = append(ss, fmt.Sprintf("R%d=%d", i, u))
+		}
+	}
+
+	if len(ss) > 0 {
+		return fmt.Sprintf("%v %s", Stack, strings.Join(ss, " "))
+	}
+
+	return fmt.Sprintf("%v", Stack)
+}
+
 // print prints a formatted string to Stdout.
 func print(s string, vs ...any) {
 	fmt.Fprintf(Stdout, s, vs...)
@@ -654,17 +661,14 @@ func init() {
 
 // main executes the main Cairn program.
 func main() {
-	// Parse command-line flags.
 	fs, err := ParseFlags(os.Args[1:])
 	if err != nil {
 		print(err.Error())
 		ExitFunc(1)
 	}
 
-	// Set environment according to flags.
 	Debug = fs.Debug
 
-	// Run REPL or single command.
 	switch {
 	case fs.Command != "":
 		if err := once(fs.Command); err != nil {
@@ -679,8 +683,8 @@ func main() {
 			if err := once(s); err != nil {
 				print("Error: %s.\n\n", err.Error())
 
-			} else if len(Stack) > 0 {
-				print("[ %s ]\n", Dump())
+			} else {
+				print("%s\n", dump())
 			}
 		}
 	}
