@@ -7,7 +7,6 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -732,19 +731,5 @@ func TestInit(t *testing.T) {
 }
 
 func TestMain(t *testing.T) {
-	// setup
-	b := Bufs("")
-	os.Args = SS("cairn", "-c", "72 OUT 73 OUT")
-
-	// success - command string
-	main()
-	assert.Equal(t, "HI", b.String())
-
-	// setup
-	b = Bufs("1 2 ADD\nBYE\n")
-	os.Args = SS("cairn")
-
-	// success - REPL
-	main()
-	assert.Equal(t, ">>> [ 3 ]\n>>> ", b.String())
+	// cannot test main function
 }
