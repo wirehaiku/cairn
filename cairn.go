@@ -38,7 +38,28 @@ var Registers [8]uint8
 // Stack is a last-in-first-out stack of stored memory values.
 var Stack = make([]uint8, 0, 65536)
 
-// 1.2: Error Definitions
+// 1.2: System Variables
+/////////////////////////
+
+// Debug is a boolean indicating if the main loop should print debug information.
+var Debug = false
+
+// ExitFunc is the function used to exit the program.
+var ExitFunc = os.Exit
+
+// Stdin is the default input Reader.
+var Stdin = bufio.NewReader(os.Stdin)
+
+// Stdout is the default output Writer.
+var Stdout = bufio.NewWriter(os.Stdout)
+
+// VersionDate is the date of the current Cairn version.
+var VersionDate = "2024-03-05"
+
+// VersionNums is the SemVer number of the current Cairn version.
+var VersionNums = "0.0.0"
+
+// 1.3: Error Definitions
 //////////////////////////
 
 // ErrAtomUndefined is the error for evaluating undefined atoms.
@@ -64,27 +85,6 @@ var ErrInvalidSymbol = errors.New("invalid symbol")
 
 // ErrInvalidInteger is the error for using an atom other than a symbol.
 var ErrInvalidInteger = errors.New("invalid integer")
-
-// 1.3: System Variables
-/////////////////////////
-
-// Debug is a boolean indicating if the main loop should print debug information.
-var Debug = false
-
-// ExitFunc is the function used to exit the program.
-var ExitFunc = os.Exit
-
-// Stdin is the default input Reader.
-var Stdin = bufio.NewReader(os.Stdin)
-
-// Stdout is the default output Writer.
-var Stdout = bufio.NewWriter(os.Stdout)
-
-// VersionDate is the date of the current Cairn version.
-var VersionDate = "2024-03-05"
-
-// VersionNums is the SemVer number of the current Cairn version.
-var VersionNums = "0.0.0"
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //                            Part 2: Collection Functions                           //
