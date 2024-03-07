@@ -11,16 +11,6 @@ func Bool(b bool) int {
 	return 0
 }
 
-// CheckSymbol returns an error if an atom is not a symbol string.
-func CheckSymbol(a any) error {
-	switch a.(type) {
-	case string:
-		return nil
-	default:
-		return fmt.Errorf(`non-symbol "%v" provided`, a)
-	}
-}
-
 // DequeueEnd removes returns all atoms in the Queue up to an "end" atom.
 func DequeueEnd(q *Queue) ([]any, error) {
 	var as []any
@@ -80,4 +70,14 @@ func PurePush(c *Cairn, n int, f func([]int) int) error {
 
 	c.Stack.Push(f(is))
 	return nil
+}
+
+// ToSymbol returns an atom as a symbol string.
+func ToSymbol(a any) (string, error) {
+	switch a := a.(type) {
+	case string:
+		return a, nil
+	default:
+		return "", fmt.Errorf(`non-symbol "%v" provided`, a)
+	}
 }

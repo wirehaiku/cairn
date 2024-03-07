@@ -16,16 +16,6 @@ func TestBool(t *testing.T) {
 	assert.Equal(t, 0, i)
 }
 
-func TestCheckSymbol(t *testing.T) {
-	// success
-	err := CheckSymbol("foo")
-	assert.NoError(t, err)
-
-	// failure - non-symbol
-	err = CheckSymbol(123)
-	assert.EqualError(t, err, `non-symbol "123" provided`)
-}
-
 func TestDequeueEnd(t *testing.T) {
 	// setup
 	q := NewQueue("for", "x", "y", "end", "end", "nop")
@@ -79,4 +69,16 @@ func TestPurePush(t *testing.T) {
 	// failure - stack is empty
 	err = PurePush(c, 2, nil)
 	assert.EqualError(t, err, "stack is empty")
+}
+
+func TestToSymbol(t *testing.T) {
+	// success
+	s, err := ToSymbol("foo")
+	assert.IsType(t, "foo", s)
+	assert.NoError(t, err)
+
+	// failure - non-symbol
+	s, err = ToSymbol(123)
+	assert.Empty(t, s)
+	assert.EqualError(t, err, `non-symbol "123" provided`)
 }
