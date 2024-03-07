@@ -12,7 +12,7 @@ func TestNewStack(t *testing.T) {
 	assert.Equal(t, []int{1, 2, 3}, s.Integers)
 }
 
-func TestClear(t *testing.T) {
+func TestStackClear(t *testing.T) {
 	// setup
 	s := NewStack(1, 2, 3)
 
@@ -21,7 +21,7 @@ func TestClear(t *testing.T) {
 	assert.Empty(t, s.Integers)
 }
 
-func TestEmpty(t *testing.T) {
+func TestStackEmpty(t *testing.T) {
 	// success - true
 	b := NewStack().Empty()
 	assert.True(t, b)
@@ -31,13 +31,13 @@ func TestEmpty(t *testing.T) {
 	assert.False(t, b)
 }
 
-func TestLen(t *testing.T) {
+func TestStackLen(t *testing.T) {
 	// success
 	n := NewStack(1, 2, 3).Len()
 	assert.Equal(t, 3, n)
 }
 
-func TestPop(t *testing.T) {
+func TestStackPop(t *testing.T) {
 	// setup
 	s := NewStack(1)
 
@@ -53,7 +53,7 @@ func TestPop(t *testing.T) {
 	assert.EqualError(t, err, "stack is empty")
 }
 
-func TestPopN(t *testing.T) {
+func TestStackPopN(t *testing.T) {
 	// setup
 	s := NewStack(1, 2, 3)
 
@@ -69,7 +69,7 @@ func TestPopN(t *testing.T) {
 	assert.EqualError(t, err, "stack is empty")
 }
 
-func TestPush(t *testing.T) {
+func TestStackPush(t *testing.T) {
 	// setup
 	s := NewStack(1, 2, 3)
 
@@ -78,7 +78,7 @@ func TestPush(t *testing.T) {
 	assert.Equal(t, []int{1, 2, 3, 4}, s.Integers)
 }
 
-func TestPushAll(t *testing.T) {
+func TestStackPushAll(t *testing.T) {
 	// setup
 	s := NewStack(1, 2, 3)
 
