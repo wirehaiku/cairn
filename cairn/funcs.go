@@ -1,6 +1,8 @@
 package cairn
 
-import "os"
+import (
+	"os"
+)
 
 // ExitFunc is the default system exit function.
 var ExitFunc = os.Exit
@@ -16,9 +18,9 @@ var Funcs = map[string]CairnFunc{
 	"clr": StackClearFunc,
 	"def": SystemDefineFunc,
 	"get": TableGetFunc,
-	// "ift": LogicIfTrueFunc,
-	// "iff": LogicIfFalseFunc,
-	// "for": LogicLoopFunc,
+	"ift": LogicIfTrueFunc,
+	"iff": LogicIfFalseFunc,
+	"for": LogicLoopFunc,
 	"inn": IOReadFunc,
 	"out": IOWriteFunc,
 	"nop": LogicNoOpFunc,
@@ -54,6 +56,74 @@ func LogicEqualFunc(c *Cairn) error {
 	return PurePush(c, 2, func(is []int) int {
 		return Bool(is[0] == is[1])
 	})
+}
+
+// LogicIfFalseFunc (a --) evaluates code if a is false.
+func LogicIfFalseFunc(c *Cairn) error {
+	i, err := c.Stack.Pop()
+	if err != nil {
+		return err
+	}
+
+	as, err := DequeueEnd(c.Queue)
+	if err != nil {
+		return err
+	}
+
+	if i == 0 {
+		return c.EvaluateAll(as)
+	}
+
+	return nil
+}
+
+// LogicIfTrueFunc (a --) evaluates code if a is true.
+func LogicIfTrueFunc(c *Cairn) error {
+	i, err := c.Stack.Pop()
+	if err != nil {
+		return err
+	}
+
+	as, err := DequeueEnd(c.Queue)
+	if err != nil {
+		return err
+	}
+
+	if i != 0 {
+		return c.EvaluateAll(as)
+	}
+
+	return nil
+}
+
+// LogicLoopFunc (--) repeats code until a register is zero.
+func LogicLoopFunc(c *Cairn) error {
+	a, err := c.Queue.Dequeue()
+	if err != nil {
+		return err
+	}
+
+	i, err := ToInteger(a)
+	if err != nil {
+		return err
+	}
+
+	as, err := DequeueEnd(c.Queue)
+	if err != nil {
+		return err
+	}
+
+	for {
+		if err := c.EvaluateAll(as); err != nil {
+			return err
+		}
+
+		if c.Table.Get(i) == 0 {
+			break
+		}
+	}
+
+	return nil
 }
 
 // LogicNoOpFunc does nothing.

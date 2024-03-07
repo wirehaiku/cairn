@@ -60,6 +60,65 @@ func TestLogicEqualFunc(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestLogicIfFalseFunc(t *testing.T) {
+	// setup
+	c, _ := xCairn("")
+	c.Queue.EnqueueAll([]any{123, "end"})
+	c.Stack.Push(0)
+
+	// success - true
+	err := LogicIfFalseFunc(c)
+	assert.Empty(t, c.Queue.Atoms)
+	assert.Equal(t, []int{123}, c.Stack.Integers)
+	assert.NoError(t, err)
+
+	// setup
+	c.Queue.EnqueueAll([]any{123, "end"})
+	c.Stack.Clear()
+	c.Stack.Push(1)
+
+	// success - false
+	err = LogicIfFalseFunc(c)
+	assert.Empty(t, c.Queue.Atoms)
+	assert.Empty(t, c.Stack.Integers)
+	assert.NoError(t, err)
+}
+
+func TestLogicIfTrueFunc(t *testing.T) {
+	// setup
+	c, _ := xCairn("")
+	c.Queue.EnqueueAll([]any{123, "end"})
+	c.Stack.Push(1)
+
+	// success - true
+	err := LogicIfTrueFunc(c)
+	assert.Empty(t, c.Queue.Atoms)
+	assert.Equal(t, []int{123}, c.Stack.Integers)
+	assert.NoError(t, err)
+
+	// setup
+	c.Queue.EnqueueAll([]any{123, "end"})
+	c.Stack.Clear()
+	c.Stack.Push(0)
+
+	// success - false
+	err = LogicIfTrueFunc(c)
+	assert.Empty(t, c.Queue.Atoms)
+	assert.Empty(t, c.Stack.Integers)
+	assert.NoError(t, err)
+}
+
+func TestLogicLoopFunc(t *testing.T) {
+	// setup
+	c, _ := xCairn("")
+	c.Queue.EnqueueAll([]any{0, 123, "end"})
+
+	// success
+	err := LogicLoopFunc(c)
+	assert.Equal(t, []int{123}, c.Stack.Integers)
+	assert.NoError(t, err)
+}
+
 func TestLogicNoOpFunc(t *testing.T) {
 	// setup
 	c, _ := xCairn("")
@@ -145,8 +204,7 @@ func TestStackClearFunc(t *testing.T) {
 func TestSystemDefineFunc(t *testing.T) {
 	// setup
 	c, _ := xCairn("")
-	c.Queue.EnqueueAll([]any{"foo", "ift", 123, "end", "end"})
-	c.Stack.Push(1)
+	c.Queue.EnqueueAll([]any{"foo", 123, "end"})
 
 	// success
 	err := SystemDefineFunc(c)
@@ -154,10 +212,10 @@ func TestSystemDefineFunc(t *testing.T) {
 	assert.NotNil(t, c.Funcs["foo"])
 	assert.NoError(t, err)
 
-	// success - function test - ENABLE WHEN IFT IS DEFINED
-	// err = c.Funcs["foo"](c)
-	// assert.Equal(t, []int{123}, c.Stack.Integers)
-	// assert.NoError(t, err)
+	// success - function test
+	err = c.Funcs["foo"](c)
+	assert.Equal(t, []int{123}, c.Stack.Integers)
+	assert.NoError(t, err)
 }
 
 func TestTableGetFunc(t *testing.T) {
