@@ -2,7 +2,7 @@ package cairn
 
 import "fmt"
 
-// Queue is a first-in-first-out Queue of atoms.
+// Queue is a first-in-first-out queue of atoms.
 type Queue struct {
 	Atoms []any
 }
