@@ -216,6 +216,7 @@ func AtomiseAll(ss []string) []any {
 
 // Evaluate evaluates an atom.
 func Evaluate(a any) error {
+	fmt.Printf("eval %v\n", a)
 	switch a := a.(type) {
 	case uint8:
 		Push(a)
@@ -391,38 +392,6 @@ func CLR() error {
 	return nil
 }
 
-// DUP (a → a a) duplicates the top stack item.
-func DUP() error {
-	u, err := Pop()
-	if err != nil {
-		return err
-	}
-
-	PushAll([]uint8{u, u})
-	return nil
-}
-
-// DRP (a b → a) deletes the top stack item.
-func DRP() error {
-	_, err := Pop()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// SWP (a b → b a) swaps the top two stack items.
-func SWP() error {
-	us, err := PopN(2)
-	if err != nil {
-		return err
-	}
-
-	PushAll([]uint8{us[0], us[1]})
-	return nil
-}
-
 // GET (a → b) returns the value of register a.
 func GET() error {
 	u, err := Pop()
@@ -460,61 +429,6 @@ func EQU() error {
 	}
 
 	Push(Bool(us[0] == us[1]))
-	return nil
-}
-
-// NEQ (a b → c) returns true if a does not equal b.
-func NEQ() error {
-	us, err := PopN(2)
-	if err != nil {
-		return err
-	}
-
-	Push(Bool(us[0] != us[1]))
-	return nil
-}
-
-// AND (a b → c) returns true if both a and b are true.
-func AND() error {
-	us, err := PopN(2)
-	if err != nil {
-		return err
-	}
-
-	Push(Bool(us[0] != 0 && us[1] != 0))
-	return nil
-}
-
-// ORR (a b → c) returns true if either a or b are true.
-func ORR() error {
-	us, err := PopN(2)
-	if err != nil {
-		return err
-	}
-
-	Push(Bool(us[0] != 0 || us[1] != 0))
-	return nil
-}
-
-// XOR (a b → c) returns true if only a or only b is true.
-func XOR() error {
-	us, err := PopN(2)
-	if err != nil {
-		return err
-	}
-
-	Push(Bool(us[0] != 0 && us[1] == 0 || us[0] == 0 && us[1] != 0))
-	return nil
-}
-
-// NOT (a → b) returns true if a is false.
-func NOT() error {
-	u, err := Pop()
-	if err != nil {
-		return err
-	}
-
-	Push(Bool(u == 0))
 	return nil
 }
 
@@ -724,8 +638,8 @@ func prompt(s string) string {
 func init() {
 	Commands = map[string]func() error{
 		"ADD": ADD, "SUB": SUB, "MOD": MOD, "GTE": GTE,
-		"CLR": CLR, "DUP": DUP, "DRP": DRP, "SWP": SWP, "GET": GET, "SET": SET,
-		"EQU": EQU, "NEQ": NEQ, "AND": AND, "ORR": ORR, "XOR": XOR, "NOT": NOT,
+		"CLR": CLR, "GET": GET, "SET": SET,
+		"EQU": EQU,
 		"INN": INN, "OUT": OUT, "BYE": BYE, "DIE": DIE,
 		"IFT": IFT, "IFF": IFF, "FOR": FOR, "DEF": DEF, "TST": TST,
 	}

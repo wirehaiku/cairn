@@ -57,9 +57,6 @@ Name  | Form      | Description
 Name  | Form        | Description
 ----- | ----------- | -----------
 `CLR` | `... → _`   | Clear the stack.
-`DUP` | `a → a a`   | Duplicate the top item.
-`DRP` | `a b → a`   | Delete the top item.
-`SWP` | `a b → b a` | Swap the top two items.
 `GET` | `a → b`     | Return the value of register `a`.
 `SET` | `a b → _`   | Set the value `a` to register `b`.
 
@@ -68,11 +65,6 @@ Name  | Form        | Description
 Name  | Form      | Description
 ----- | --------- | -----------
 `EQU` | `a b → c` | Return true if `a` equals `b`.
-`NEQ` | `a b → c` | Return true if `a` does not equal `b`.
-`AND` | `a b → c` | Return true if both `a` and `b` are true.
-`ORR` | `a b → c` | Return true if either `a` or `b` are true.
-`XOR` | `a b → c` | Return true if only `a` or only `b` is true.
-`NOT` | `a → b`   | Return true if `a` is false.
 
 ### System Commands
 

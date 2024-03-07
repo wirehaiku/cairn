@@ -10,20 +10,67 @@
 DEF · // No-op, used as code separator.
 END
 
+// 1.2: Memory Helpers
+DEF RCLR // Clear all registers.
+    0 0 SET · 0 1 SET · 0 2 SET · 0 3 SET
+    4 0 SET · 0 5 SET · 0 6 SET · 0 7 SET
+END
+
 // Part 2: Derived Functions
 /////////////////////////////
 
 // 2.1: Math Functions
 
 DEF LT // Return true if a < b.
-    GTE NOT
+    GTE F?
 END
 
 DEF LTE // Return true if a <= b.
-    0 SET 1 SET · 1 GET 0 GET
-    LT · 0 GET 1 GET EQU · ORR
+    0 SET 1 SET
+    1 GET 0 GET LT · 1 GET 0 GET EQU · OR
+    RCLR
 END
 
 DEF GT // Return true if a > b.
-    LTE NOT
+    LTE F?
+END
+
+// 2.2: Memory Functions
+
+DEF DUP // Duplicate the top item.
+    0 SET · 0 GET 0 GET · RCLR
+END
+
+DEF DRP // Delete the top item.
+    0 SET · RCLR
+END
+
+DEF SWP // Swap the top two items.
+    0 SET 1 SET · 0 GET 1 GET · RCLR
+END
+
+// 2.3: Logic Functions
+
+DEF T? // Return true if a is true.
+    0 EQU · 0 EQU
+END
+
+DEF F? // Return true if a is false.
+    0 EQU
+END
+
+DEF NEQ // Return true if a != b.
+    EQU 0 EQU
+END
+
+DEF AND // Return true if a and b are true.
+    T? · SWP T? · ADD 2 EQU
+END
+
+DEF OR // Return true if a or b are true.
+    T? · SWP T? · ADD 0 NEQ
+END
+
+DEF XOR // Return true if only a or b are true.
+    T? · SWP T? · ADD 1 EQU
 END
