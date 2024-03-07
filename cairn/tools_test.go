@@ -18,11 +18,11 @@ func TestBool(t *testing.T) {
 
 func TestDequeueEnd(t *testing.T) {
 	// setup
-	q := NewQueue("for", "x", "y", "end", "end", "nop")
+	q := NewQueue("ift", 123, "end", "end", "nop")
 
 	// success
 	as, err := DequeueEnd(q)
-	assert.Equal(t, []any{"for", "x", "y", "end"}, as)
+	assert.Equal(t, []any{"ift", 123, "end"}, as)
 	assert.Equal(t, []any{"nop"}, q.Atoms)
 	assert.NoError(t, err)
 }

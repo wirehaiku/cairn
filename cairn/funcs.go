@@ -14,7 +14,7 @@ var Funcs = map[string]CairnFunc{
 	">":   MathGreaterThanFunc,
 	"die": IOExitFunc,
 	"clr": StackClearFunc,
-	// "def": SystemDefineFunc,
+	"def": SystemDefineFunc,
 	"get": TableGetFunc,
 	// "ift": LogicIfTrueFunc,
 	// "iff": LogicIfFalseFunc,
@@ -92,6 +92,27 @@ func MathSubFunc(c *Cairn) error {
 // StackClearFunc (--) clears the Stack.
 func StackClearFunc(c *Cairn) error {
 	c.Stack.Clear()
+	return nil
+}
+
+// SystemDefineFunc sets a function in the Cairn.
+func SystemDefineFunc(c *Cairn) error {
+	a, err := c.Queue.Dequeue()
+	if err != nil {
+		return err
+	}
+
+	s, err := ToSymbol(a)
+	if err != nil {
+		return err
+	}
+
+	as, err := DequeueEnd(c.Queue)
+	if err != nil {
+		return err
+	}
+
+	c.SetFuncAtoms(s, as)
 	return nil
 }
 

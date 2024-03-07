@@ -142,6 +142,24 @@ func TestStackClearFunc(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestSystemDefineFunc(t *testing.T) {
+	// setup
+	c, _ := xCairn("")
+	c.Queue.EnqueueAll([]any{"foo", "ift", 123, "end", "end"})
+	c.Stack.Push(1)
+
+	// success
+	err := SystemDefineFunc(c)
+	assert.Empty(t, c.Queue.Atoms)
+	assert.NotNil(t, c.Funcs["foo"])
+	assert.NoError(t, err)
+
+	// success - function test - ENABLE WHEN IFT IS DEFINED
+	// err = c.Funcs["foo"](c)
+	// assert.Equal(t, []int{123}, c.Stack.Integers)
+	// assert.NoError(t, err)
+}
+
 func TestTableGetFunc(t *testing.T) {
 	// setup
 	c, _ := xCairn("")
