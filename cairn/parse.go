@@ -27,6 +27,8 @@ func AtomiseAll(ss []string) []any {
 // Tokenise returns a token slice from a program string.
 func Tokenise(s string) []string {
 	var ss []string
+	s = strings.ToUpper(s)
+
 	for _, s := range strings.Split(s, "\n") {
 		s = strings.SplitN(s, "//", 2)[0]
 		ss = append(ss, strings.Fields(s)...)

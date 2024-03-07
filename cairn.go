@@ -216,7 +216,6 @@ func AtomiseAll(ss []string) []any {
 
 // Evaluate evaluates an atom.
 func Evaluate(a any) error {
-	fmt.Printf("eval %v\n", a)
 	switch a := a.(type) {
 	case uint8:
 		Push(a)
