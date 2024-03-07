@@ -7,9 +7,13 @@ import (
 )
 
 func TestNewTable(t *testing.T) {
-	// success
+	// success - actual map
 	ta := NewTable(map[int]int{0: 123})
 	assert.Equal(t, map[int]int{0: 123}, ta.Integers)
+
+	// success - nil map
+	ta = NewTable(nil)
+	assert.Equal(t, map[int]int{}, ta.Integers)
 }
 
 func TestTableClear(t *testing.T) {

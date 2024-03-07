@@ -7,6 +7,10 @@ type Table struct {
 
 // NewTable returns a pointer to a new Table.
 func NewTable(im map[int]int) *Table {
+	if im == nil {
+		return &Table{make(map[int]int)}
+	}
+
 	return &Table{im}
 }
 
