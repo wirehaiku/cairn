@@ -218,6 +218,32 @@ func TestSystemDefineFunc(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestSystemTestFunc(t *testing.T) {
+	// setup
+	c, b := xCairn("")
+	c.Queue.EnqueueAll([]any{"foo", 123, "end"})
+	c.Stack.Push(0)
+
+	// success - test fails
+	err := SystemTestFunc(c)
+	assert.Empty(t, c.Queue.Atoms)
+	assert.Empty(t, c.Stack.Integers)
+	assert.Equal(t, "TEST: foo 123.\n", b.String())
+	assert.NoError(t, err)
+
+	// setup
+	b.Reset()
+	c.Queue.EnqueueAll([]any{"foo", 123, "end"})
+	c.Stack.Push(1)
+
+	// success - test succeeds
+	err = SystemTestFunc(c)
+	assert.Empty(t, c.Queue.Atoms)
+	assert.Empty(t, c.Stack.Integers)
+	assert.Equal(t, "", b.String())
+	assert.NoError(t, err)
+}
+
 func TestTableGetFunc(t *testing.T) {
 	// setup
 	c, _ := xCairn("")

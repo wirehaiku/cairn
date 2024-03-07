@@ -1,7 +1,9 @@
 package cairn
 
 import (
+	"fmt"
 	"os"
+	"strings"
 )
 
 // ExitFunc is the default system exit function.
@@ -25,7 +27,7 @@ var Funcs = map[string]CairnFunc{
 	"out": IOWriteFunc,
 	"nop": LogicNoOpFunc,
 	"set": TableSetFunc,
-	// "tst": SystemTestFunc,
+	"tst": SystemTestFunc,
 }
 
 // IOExitFunc (a --) exits the program with an integer exit code.
@@ -165,7 +167,7 @@ func StackClearFunc(c *Cairn) error {
 	return nil
 }
 
-// SystemDefineFunc sets a function in the Cairn.
+// SystemDefineFunc (--) sets a function in the Cairn.
 func SystemDefineFunc(c *Cairn) error {
 	a, err := c.Queue.Dequeue()
 	if err != nil {
@@ -183,6 +185,30 @@ func SystemDefineFunc(c *Cairn) error {
 	}
 
 	c.SetFuncAtoms(s, as)
+	return nil
+}
+
+// SystemTestFunc (a --) prints the given symbols if a is false.
+func SystemTestFunc(c *Cairn) error {
+	i, err := c.Stack.Pop()
+	if err != nil {
+		return err
+	}
+
+	as, err := DequeueEnd(c.Queue)
+	if err != nil {
+		return err
+	}
+
+	if i == 0 {
+		var ss []string
+		for _, a := range as {
+			ss = append(ss, fmt.Sprintf("%v", a))
+		}
+
+		c.Write("TEST: %s.\n", strings.Join(ss, " "))
+	}
+
 	return nil
 }
 
