@@ -31,5 +31,5 @@ func TestTokenise(t *testing.T) {
 	`
 
 	ss := Tokenise(s)
-	assert.Equal(t, []string{"123", "FOO"}, ss)
+	assert.Equal(t, []string{"123", "foo"}, ss)
 }

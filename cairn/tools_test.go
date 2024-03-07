@@ -16,16 +16,37 @@ func TestBool(t *testing.T) {
 	assert.Equal(t, 0, i)
 }
 
+func TestCheckSymbol(t *testing.T) {
+	// success
+	err := CheckSymbol("foo")
+	assert.NoError(t, err)
+
+	// failure - non-symbol
+	err = CheckSymbol(123)
+	assert.EqualError(t, err, `non-symbol "123" provided`)
+}
+
+func TestDequeueEnd(t *testing.T) {
+	// setup
+	q := NewQueue("for", "x", "y", "end", "end", "nop")
+
+	// success
+	as, err := DequeueEnd(q)
+	assert.Equal(t, []any{"for", "x", "y", "end"}, as)
+	assert.Equal(t, []any{"nop"}, q.Atoms)
+	assert.NoError(t, err)
+}
+
 func TestIn(t *testing.T) {
 	// setup
-	ss := []string{"a", "b", "c", "d"}
+	as := []any{"a", "b", "c", "d"}
 
 	// success - true
-	b := In("a", ss)
+	b := In("a", as)
 	assert.True(t, b)
 
 	// success - false
-	b = In("nope", ss)
+	b = In("nope", as)
 	assert.False(t, b)
 }
 

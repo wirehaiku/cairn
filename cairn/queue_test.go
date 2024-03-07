@@ -21,22 +21,6 @@ func TestClear(t *testing.T) {
 	assert.Empty(t, q.Atoms)
 }
 
-func TestEmpty(t *testing.T) {
-	// success - true
-	b := NewQueue().Empty()
-	assert.True(t, b)
-
-	// success - false
-	b = NewQueue("a", "b", "c").Empty()
-	assert.False(t, b)
-}
-
-func TestLen(t *testing.T) {
-	// success
-	n := NewQueue("a", "b", "c").Len()
-	assert.Equal(t, 3, n)
-}
-
 func TestDequeue(t *testing.T) {
 	// setup
 	q := NewQueue("a")
@@ -53,20 +37,14 @@ func TestDequeue(t *testing.T) {
 	assert.EqualError(t, err, "queue is empty")
 }
 
-func TestDequeueTo(t *testing.T) {
-	// setup
-	q := NewQueue("a", "b", "c")
+func TestEmpty(t *testing.T) {
+	// success - true
+	b := NewQueue().Empty()
+	assert.True(t, b)
 
-	// success
-	as, err := q.DequeueTo("b")
-	assert.Equal(t, []any{"a"}, as)
-	assert.Equal(t, []any{"c"}, q.Atoms)
-	assert.NoError(t, err)
-
-	// failure - queue is empty
-	as, err = q.DequeueTo("d")
-	assert.Nil(t, as)
-	assert.EqualError(t, err, "queue is empty")
+	// success - false
+	b = NewQueue("a", "b", "c").Empty()
+	assert.False(t, b)
 }
 
 func TestEnqueue(t *testing.T) {
@@ -85,4 +63,10 @@ func TestEnqueueAll(t *testing.T) {
 	// success
 	q.EnqueueAll([]any{"d", "e", "f"})
 	assert.Equal(t, []any{"a", "b", "c", "d", "e", "f"}, q.Atoms)
+}
+
+func TestLen(t *testing.T) {
+	// success
+	n := NewQueue("a", "b", "c").Len()
+	assert.Equal(t, 3, n)
 }
