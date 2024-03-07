@@ -72,6 +72,16 @@ func PurePush(c *Cairn, n int, f func([]int) int) error {
 	return nil
 }
 
+// ToInteger returns an atom as an integer.
+func ToInteger(a any) (int, error) {
+	switch a := a.(type) {
+	case int:
+		return a, nil
+	default:
+		return 0, fmt.Errorf(`non-integer "%v" provided`, a)
+	}
+}
+
 // ToSymbol returns an atom as a symbol string.
 func ToSymbol(a any) (string, error) {
 	switch a := a.(type) {

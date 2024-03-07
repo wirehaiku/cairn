@@ -71,14 +71,26 @@ func TestPurePush(t *testing.T) {
 	assert.EqualError(t, err, "stack is empty")
 }
 
+func TestToInteger(t *testing.T) {
+	// success
+	a, err := ToInteger(123)
+	assert.IsType(t, 123, a)
+	assert.NoError(t, err)
+
+	// failure - non-integer
+	a, err = ToInteger("foo")
+	assert.Empty(t, a)
+	assert.EqualError(t, err, `non-integer "foo" provided`)
+}
+
 func TestToSymbol(t *testing.T) {
 	// success
-	s, err := ToSymbol("foo")
-	assert.IsType(t, "foo", s)
+	a, err := ToSymbol("foo")
+	assert.IsType(t, "foo", a)
 	assert.NoError(t, err)
 
 	// failure - non-symbol
-	s, err = ToSymbol(123)
-	assert.Empty(t, s)
+	a, err = ToSymbol(123)
+	assert.Empty(t, a)
 	assert.EqualError(t, err, `non-symbol "123" provided`)
 }
