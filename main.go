@@ -23,11 +23,13 @@ func main() {
 	c := cairn.NewCairn(os.Stdin, os.Stdout)
 	f, err := cairn.ParseFlags(os.Args[1:])
 	try(err)
+	try(c.Execute(cairn.Library))
 
 	if f.Command != "" {
-		try(c.Execute(cairn.Library + f.Command))
+		try(c.Execute(f.Command))
 
 	} else if len(f.Files) != 0 {
+
 		for _, p := range f.Files {
 			bs, err := os.ReadFile(p)
 			if err != nil {
@@ -39,7 +41,6 @@ func main() {
 
 	} else {
 		c.WriteString("Cairn version 0.0.0 (2024-03-05).\n")
-		try(c.Execute(cairn.Library))
 
 		for {
 			c.WriteString(">>> ")
