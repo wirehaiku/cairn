@@ -20,17 +20,17 @@ func main() {
 	try(err)
 
 	if f.Command != "" {
-		try(c.EvaluateString(cairn.Library + f.Command))
+		try(c.Execute(cairn.Library + f.Command))
 
 	} else {
 		c.WriteString("Cairn version 0.0.0 (2024-03-05).\n")
-		try(c.EvaluateString(cairn.Library))
+		try(c.Execute(cairn.Library))
 
 		for {
 			c.WriteString(">>> ")
 			s := c.ReadString('\n')
 
-			if err := c.EvaluateString(s); err != nil {
+			if err := c.Execute(s); err != nil {
 				c.WriteString("Error: %s.\n\n", err.Error())
 
 			} else if !c.Stack.Empty() {
