@@ -142,7 +142,7 @@ func TestMathAddFunc(t *testing.T) {
 func TestMathGreaterThanFunc(t *testing.T) {
 	// setup
 	c, _ := xCairn("")
-	c.Stack.PushAll([]int{1, 2})
+	c.Stack.PushAll([]int{2, 1})
 
 	// success - true
 	err := MathGreaterThanFunc(c)
@@ -151,7 +151,7 @@ func TestMathGreaterThanFunc(t *testing.T) {
 
 	// setup
 	c.Stack.Clear()
-	c.Stack.PushAll([]int{2, 1})
+	c.Stack.PushAll([]int{1, 2})
 
 	// success - false
 	err = MathGreaterThanFunc(c)
@@ -162,7 +162,7 @@ func TestMathGreaterThanFunc(t *testing.T) {
 func TestMathLesserThanFunc(t *testing.T) {
 	// setup
 	c, _ := xCairn("")
-	c.Stack.PushAll([]int{2, 1})
+	c.Stack.PushAll([]int{1, 2})
 
 	// success - true
 	err := MathLesserThanFunc(c)
@@ -171,7 +171,7 @@ func TestMathLesserThanFunc(t *testing.T) {
 
 	// setup
 	c.Stack.Clear()
-	c.Stack.PushAll([]int{1, 2})
+	c.Stack.PushAll([]int{2, 1})
 
 	// success - false
 	err = MathLesserThanFunc(c)
@@ -182,7 +182,7 @@ func TestMathLesserThanFunc(t *testing.T) {
 func TestMathSubFunc(t *testing.T) {
 	// setup
 	c, _ := xCairn("")
-	c.Stack.PushAll([]int{2, 3})
+	c.Stack.PushAll([]int{3, 2})
 
 	// success
 	err := MathSubFunc(c)
@@ -215,32 +215,6 @@ func TestSystemDefineFunc(t *testing.T) {
 	// success - function test
 	err = c.Funcs["foo"](c)
 	assert.Equal(t, []int{123}, c.Stack.Integers)
-	assert.NoError(t, err)
-}
-
-func TestSystemTestFunc(t *testing.T) {
-	// setup
-	c, b := xCairn("")
-	c.Queue.EnqueueAll([]any{"foo", 123, "end"})
-	c.Stack.Push(0)
-
-	// success - test fails
-	err := SystemTestFunc(c)
-	assert.Empty(t, c.Queue.Atoms)
-	assert.Empty(t, c.Stack.Integers)
-	assert.Equal(t, "TEST: foo 123.\n", b.String())
-	assert.NoError(t, err)
-
-	// setup
-	b.Reset()
-	c.Queue.EnqueueAll([]any{"foo", 123, "end"})
-	c.Stack.Push(1)
-
-	// success - test succeeds
-	err = SystemTestFunc(c)
-	assert.Empty(t, c.Queue.Atoms)
-	assert.Empty(t, c.Stack.Integers)
-	assert.Equal(t, "", b.String())
 	assert.NoError(t, err)
 }
 

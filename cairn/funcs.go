@@ -1,9 +1,7 @@
 package cairn
 
 import (
-	"fmt"
 	"os"
-	"strings"
 )
 
 // ExitFunc is the default system exit function.
@@ -27,7 +25,6 @@ var Funcs = map[string]CairnFunc{
 	"out": IOWriteFunc,
 	"nop": LogicNoOpFunc,
 	"set": TableSetFunc,
-	"tst": SystemTestFunc,
 }
 
 // IOExitFunc (a --) exits the program with an integer exit code.
@@ -55,7 +52,7 @@ func IOWriteFunc(c *Cairn) error {
 // LogicEqualFunc (a b -- c) pushes true if a == b.
 func LogicEqualFunc(c *Cairn) error {
 	return PurePush(c, 2, func(is []int) int {
-		return Bool(is[0] == is[1])
+		return Bool(is[1] == is[0])
 	})
 }
 
@@ -135,28 +132,28 @@ func LogicNoOpFunc(c *Cairn) error {
 // MathAddFunc (a b -- c) pushes the sum of the top two integers on the Stack.
 func MathAddFunc(c *Cairn) error {
 	return PurePush(c, 2, func(is []int) int {
-		return is[0] + is[1]
+		return is[1] + is[0]
 	})
 }
 
 // MathGreaterThanFunc (a b -- c) pushes true if a > b.
 func MathGreaterThanFunc(c *Cairn) error {
 	return PurePush(c, 2, func(is []int) int {
-		return Bool(is[0] > is[1])
+		return Bool(is[1] > is[0])
 	})
 }
 
 // MathLesserThanFunc (a b -- c) pushes true if a < b.
 func MathLesserThanFunc(c *Cairn) error {
 	return PurePush(c, 2, func(is []int) int {
-		return Bool(is[0] < is[1])
+		return Bool(is[1] < is[0])
 	})
 }
 
 // MathSubFunc (a b -- c) pushes the difference of the top two integers on the Stack.
 func MathSubFunc(c *Cairn) error {
 	return PurePush(c, 2, func(is []int) int {
-		return is[0] - is[1]
+		return is[1] - is[0]
 	})
 }
 
@@ -184,30 +181,6 @@ func SystemDefineFunc(c *Cairn) error {
 	}
 
 	c.SetFuncAtoms(s, as)
-	return nil
-}
-
-// SystemTestFunc (a --) prints the given symbols if a is false.
-func SystemTestFunc(c *Cairn) error {
-	i, err := c.Stack.Pop()
-	if err != nil {
-		return err
-	}
-
-	as, err := DequeueEnd(c.Queue)
-	if err != nil {
-		return err
-	}
-
-	if i == 0 {
-		var ss []string
-		for _, a := range as {
-			ss = append(ss, fmt.Sprintf("%v", a))
-		}
-
-		c.WriteString("TEST: %s.\n", strings.Join(ss, " "))
-	}
-
 	return nil
 }
 
