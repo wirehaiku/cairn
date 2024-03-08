@@ -19,8 +19,8 @@ type Cairn struct {
 type CairnFunc func(*Cairn) error
 
 // NewCairn returns a pointer to a new Cairn.
-func NewCairn(fm map[string]CairnFunc, r *bufio.Reader, w *bufio.Writer) *Cairn {
-	return &Cairn{NewQueue(), NewStack(), NewTable(nil), fm, r, w}
+func NewCairn(r *bufio.Reader, w *bufio.Writer) *Cairn {
+	return &Cairn{NewQueue(), NewStack(), NewTable(nil), Funcs, r, w}
 }
 
 // Evaluate evaluates an atom against the Cairn.
@@ -48,7 +48,14 @@ func (c *Cairn) Evaluate(a any) error {
 
 // EvaluateAll evaluates an atom slice against the Cairn.
 func (c *Cairn) EvaluateAll(as []any) error {
-	for _, a := range as {
+	c.Queue.EnqueueAll(as)
+
+	for !c.Queue.Empty() {
+		a, err := c.Queue.Dequeue()
+		if err != nil {
+			return err
+		}
+
 		if err := c.Evaluate(a); err != nil {
 			return err
 		}
