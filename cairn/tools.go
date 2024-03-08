@@ -25,7 +25,7 @@ loop:
 
 		as = append(as, a)
 
-		if In(a, []any{"ift", "iff", "for", "tst"}) {
+		if In(a, []any{"def", "iff", "ift", "for"}) {
 			ac++
 		} else if a == "end" {
 			ac--
