@@ -69,6 +69,17 @@ func TestStackPopN(t *testing.T) {
 	assert.EqualError(t, err, "stack is empty")
 }
 
+func TestStackPopTo(t *testing.T) {
+	// setup
+	s := NewStack(1, 2, 3)
+
+	// success
+	is, err := s.PopTo(2)
+	assert.Equal(t, []int{3, 2}, is)
+	assert.Equal(t, []int{1}, s.Integers)
+	assert.NoError(t, err)
+}
+
 func TestStackPush(t *testing.T) {
 	// setup
 	s := NewStack(1, 2, 3)

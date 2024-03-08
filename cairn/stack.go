@@ -42,6 +42,24 @@ func (s *Stack) Pop() (int, error) {
 	return i, nil
 }
 
+// PopTo removes and returns all integers up to and including an integer on the Stack.
+func (s *Stack) PopTo(t int) ([]int, error) {
+	var is []int
+	for {
+		i, err := s.Pop()
+		if err != nil {
+			return nil, err
+		}
+
+		is = append(is, i)
+		if is[len(is)-1] == t {
+			break
+		}
+	}
+
+	return is, nil
+}
+
 // PopN removes and returns the top N integers on the Stack.
 func (s *Stack) PopN(n int) ([]int, error) {
 	var is []int
