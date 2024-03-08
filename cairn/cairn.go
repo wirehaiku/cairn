@@ -49,6 +49,19 @@ func (c *Cairn) Evaluate(a any) error {
 
 // EvaluateAll evaluates an atom slice against the Cairn.
 func (c *Cairn) EvaluateAll(as []any) error {
+	for _, a := range as {
+		if err := c.Evaluate(a); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Execute parses and enqueues a program string and evaluates it against the Cairn.
+func (c *Cairn) Execute(s string) error {
+	ss := Tokenise(s)
+	as := AtomiseAll(ss)
 	c.Queue.EnqueueAll(as)
 
 	for !c.Queue.Empty() {
@@ -63,13 +76,6 @@ func (c *Cairn) EvaluateAll(as []any) error {
 	}
 
 	return nil
-}
-
-// EvaluateString parses a program string and evaluates it against the Cairn.
-func (c *Cairn) EvaluateString(s string) error {
-	ss := Tokenise(s)
-	as := AtomiseAll(ss)
-	return c.EvaluateAll(as)
 }
 
 // GetFunc returns a CairnFunc from the Cairn.

@@ -62,12 +62,12 @@ func TestCairnEvaluateAll(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestCairnEvaluateString(t *testing.T) {
+func TestCairnExecute(t *testing.T) {
 	// setup
 	c, _ := xCairn("")
 
 	// success
-	err := c.EvaluateString("1 2 +")
+	err := c.Execute("1 2 +")
 	assert.Equal(t, []int{3}, c.Stack.Integers)
 	assert.NoError(t, err)
 }
