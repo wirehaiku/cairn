@@ -17,6 +17,7 @@ var Funcs = map[string]CairnFunc{
 	"die": IOExitFunc,
 	"clr": StackClearFunc,
 	"def": SystemDefineFunc,
+	"eva": SystemEvalFunc,
 	"get": TableGetFunc,
 	"ift": LogicIfTrueFunc,
 	"iff": LogicIfFalseFunc,
@@ -182,6 +183,23 @@ func SystemDefineFunc(c *Cairn) error {
 
 	c.SetFuncAtoms(s, as)
 	return nil
+}
+
+// SystemEvalFunc (... --) evaluates all integers in the Stack up to a newline as a string.
+func SystemEvalFunc(c *Cairn) error {
+	is, err := c.Stack.PopTo(10)
+	if err != nil {
+		return err
+	}
+
+	var rs []rune
+	for _, i := range is {
+		rs = append(rs, rune(i))
+	}
+
+	ss := Tokenise(string(rs))
+	as := AtomiseAll(ss)
+	return c.EvaluateAll(as)
 }
 
 // TableGetFunc (a -- b) pushes a value from the Table.

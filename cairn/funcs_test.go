@@ -218,6 +218,17 @@ func TestSystemDefineFunc(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestSystemEvalFunc(t *testing.T) {
+	// success
+	c, _ := xCairn("")
+	c.Stack.PushAll([]int{10, 51, 50, 49})
+
+	// success
+	err := SystemEvalFunc(c)
+	assert.Equal(t, []int{123}, c.Stack.Integers)
+	assert.NoError(t, err)
+}
+
 func TestTableGetFunc(t *testing.T) {
 	// setup
 	c, _ := xCairn("")
