@@ -39,7 +39,7 @@ func IOExitFunc(c *Cairn) error {
 
 // IOReadFunc (-- a) pushes an input character as an integer.
 func IOReadFunc(c *Cairn) error {
-	r, _ := c.Input.ReadByte()
+	r := c.Read()
 	c.Stack.Push(int(r))
 	return nil
 }
@@ -47,9 +47,8 @@ func IOReadFunc(c *Cairn) error {
 // IOWriteFunc (a --) writes an integer as an output character.
 func IOWriteFunc(c *Cairn) error {
 	return Pure(c, 1, func(is []int) {
-		b := byte(is[0])
-		c.Output.WriteByte(b)
-		c.Output.Flush()
+		r := rune(is[0])
+		c.Write(r)
 	})
 }
 
@@ -206,7 +205,7 @@ func SystemTestFunc(c *Cairn) error {
 			ss = append(ss, fmt.Sprintf("%v", a))
 		}
 
-		c.Write("TEST: %s.\n", strings.Join(ss, " "))
+		c.WriteString("TEST: %s.\n", strings.Join(ss, " "))
 	}
 
 	return nil
