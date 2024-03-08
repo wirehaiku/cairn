@@ -7,10 +7,15 @@ import (
 	"github.com/wirehaiku/cairn/cairn"
 )
 
+func die(s string, vs ...any) {
+	s = fmt.Sprintf(s, vs...)
+	fmt.Printf("Error: %s.\n", s)
+	os.Exit(1)
+}
+
 func try(err error) {
 	if err != nil {
-		fmt.Printf("Error: %s.\n", err.Error())
-		os.Exit(1)
+		die(err.Error())
 	}
 }
 
@@ -21,6 +26,16 @@ func main() {
 
 	if f.Command != "" {
 		try(c.Execute(cairn.Library + f.Command))
+
+	} else if len(f.Files) != 0 {
+		for _, p := range f.Files {
+			bs, err := os.ReadFile(p)
+			if err != nil {
+				die("cannot execute file %q", p)
+			}
+
+			try(c.Execute(string(bs)))
+		}
 
 	} else {
 		c.WriteString("Cairn version 0.0.0 (2024-03-05).\n")

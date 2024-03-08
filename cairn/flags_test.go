@@ -8,10 +8,11 @@ import (
 
 func TestParseFlags(t *testing.T) {
 	// setup
-	ss := []string{"-c", "cmd"}
+	ss := []string{"-c", "cmd", "a.txt", "b.txt"}
 
 	// success
-	fs, err := ParseFlags(ss)
-	assert.Equal(t, "cmd", fs.Command)
+	f, err := ParseFlags(ss)
+	assert.Equal(t, "cmd", f.Command)
+	assert.Equal(t, []string{"a.txt", "b.txt"}, f.Files)
 	assert.NoError(t, err)
 }
