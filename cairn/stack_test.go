@@ -86,3 +86,9 @@ func TestStackPushAll(t *testing.T) {
 	s.PushAll([]int{4, 5, 6})
 	assert.Equal(t, []int{1, 2, 3, 4, 5, 6}, s.Integers)
 }
+
+func TestStackString(t *testing.T) {
+	// success
+	s := NewStack(1, 2, 3).String()
+	assert.Equal(t, "1 2 3", s)
+}

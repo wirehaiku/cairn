@@ -1,6 +1,10 @@
 package cairn
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 // Stack is a last-in-first-out stack of integers.
 type Stack struct {
@@ -61,4 +65,15 @@ func (s *Stack) Push(i int) {
 // PushAll appends an integer slice to the top of the Stack.
 func (s *Stack) PushAll(is []int) {
 	s.Integers = append(s.Integers, is...)
+}
+
+// String returns the Stack as a string.
+func (s *Stack) String() string {
+	var ss []string
+	for _, i := range s.Integers {
+		s := strconv.FormatInt(int64(i), 10)
+		ss = append(ss, s)
+	}
+
+	return strings.Join(ss, " ")
 }
