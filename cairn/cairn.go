@@ -1,8 +1,8 @@
 package cairn
 
 import (
-	"bufio"
 	"fmt"
+	"io"
 )
 
 // Cairn is a complete program environment.
@@ -11,15 +11,15 @@ type Cairn struct {
 	Stack  *Stack
 	Table  *Table
 	Funcs  map[string]CairnFunc
-	Input  *bufio.Reader
-	Output *bufio.Writer
+	Input  io.Reader
+	Output io.Writer
 }
 
 // CairnFunc is a Cairn program function.
 type CairnFunc func(*Cairn) error
 
 // NewCairn returns a pointer to a new Cairn.
-func NewCairn(r *bufio.Reader, w *bufio.Writer) *Cairn {
+func NewCairn(r io.Reader, w io.Writer) *Cairn {
 	return &Cairn{NewQueue(), NewStack(), NewTable(nil), Funcs, r, w}
 }
 
@@ -81,10 +81,11 @@ func (c *Cairn) GetFunc(s string) (CairnFunc, error) {
 	return f, nil
 }
 
-// Read returns a newline-ending string from the Cairn's input Reader.
-func (c *Cairn) Read() string {
-	s, _ := c.Input.ReadString('\n')
-	return s
+// Read returns a rune from the Cairn's input Reader.
+func (c *Cairn) Read() rune {
+	bs := make([]byte, 1)
+	c.Input.Read(bs)
+	return rune(bs[0])
 }
 
 // SetFunc sets a CairnFunc in the Cairn.
@@ -99,8 +100,12 @@ func (c *Cairn) SetFuncAtoms(s string, as []any) {
 	}
 }
 
-// Write writes a formatted string to the Cairn's output Writer.
-func (c *Cairn) Write(s string, vs ...any) {
+// Write writes a rune to the Cairn's output Writer.
+func (c *Cairn) Write(r rune) {
+	c.Output.Write([]byte{byte(r)})
+}
+
+// WriteString writes a formatted string to the Cairn's output Writer.
+func (c *Cairn) WriteString(s string, vs ...any) {
 	fmt.Fprintf(c.Output, s, vs...)
-	c.Output.Flush()
 }

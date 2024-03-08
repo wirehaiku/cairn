@@ -1,7 +1,6 @@
 package cairn
 
 import (
-	"bufio"
 	"bytes"
 	"testing"
 
@@ -9,11 +8,9 @@ import (
 )
 
 func xCairn(s string) (*Cairn, *bytes.Buffer) {
-	b1 := bytes.NewBufferString(s)
-	b2 := bytes.NewBuffer(nil)
-	r := bufio.NewReader(b1)
-	w := bufio.NewWriter(b2)
-	return NewCairn(r, w), b2
+	i := bytes.NewBufferString(s)
+	o := bytes.NewBuffer(nil)
+	return NewCairn(i, o), o
 }
 
 func TestNewCairn(t *testing.T) {
@@ -95,8 +92,8 @@ func TestCairnRead(t *testing.T) {
 	c, _ := xCairn("test\n")
 
 	// success
-	s := c.Read()
-	assert.Equal(t, "test\n", s)
+	r := c.Read()
+	assert.Equal(t, 't', r)
 }
 
 func TestCairnSetFunc(t *testing.T) {
@@ -125,6 +122,15 @@ func TestCairnWrite(t *testing.T) {
 	c, b := xCairn("")
 
 	// success
-	c.Write("%s\n", "test")
+	c.Write('t')
+	assert.Equal(t, "t", b.String())
+}
+
+func TestCairnWriteString(t *testing.T) {
+	// setup
+	c, b := xCairn("")
+
+	// success
+	c.WriteString("%s\n", "test")
 	assert.Equal(t, "test\n", b.String())
 }
