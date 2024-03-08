@@ -1,6 +1,7 @@
 package cairn
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 )
@@ -86,6 +87,13 @@ func (c *Cairn) Read() rune {
 	bs := make([]byte, 1)
 	c.Input.Read(bs)
 	return rune(bs[0])
+}
+
+// ReadString returns a string from the Cairn's input Reader.
+func (c *Cairn) ReadString(r rune) string {
+	b := bufio.NewReader(c.Input)
+	s, _ := b.ReadString(byte(r))
+	return s
 }
 
 // SetFunc sets a CairnFunc in the Cairn.

@@ -96,6 +96,15 @@ func TestCairnRead(t *testing.T) {
 	assert.Equal(t, 't', r)
 }
 
+func TestCairnReadString(t *testing.T) {
+	// setup
+	c, _ := xCairn("test\n")
+
+	// success
+	s := c.ReadString('\n')
+	assert.Equal(t, "test\n", s)
+}
+
 func TestCairnSetFunc(t *testing.T) {
 	// setup
 	c, _ := xCairn("")
